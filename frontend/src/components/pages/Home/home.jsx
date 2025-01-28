@@ -11,7 +11,7 @@ export default function Home(){
     },[])
 
     const fetchLiveAuctions = async ()=>{
-        const api = "http://localhost:5001/auctions/live"
+        const api = "http://localhost:5001/api/auctions/live"
         const options = {
             method : "GET"
         }
@@ -29,7 +29,7 @@ export default function Home(){
     }
 
     const fetchCompletedAuctions = async ()=>{
-        const api = "http://localhost:5001/auctions/completed"
+        const api = "http://localhost:5001/api/auctions/completed"
         const options = {
             method : "GET"
         }
