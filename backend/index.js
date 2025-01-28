@@ -64,7 +64,7 @@ app.get("/", (req, res) => {
   res.send("Welcome to Auction Backend");
 });
 const PORT = process.env.PORT || 5001;
-server.listen(PORT, () => {
+server.listen(PORT,'0.0.0.0' ,() => {
   connectDB();
   console.log("Port running on", PORT);
 });
