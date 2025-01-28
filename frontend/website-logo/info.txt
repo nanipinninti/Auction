@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: Comfortaa-Bold
+font link: https://fonts.google.com/specimen/Comfortaa
+font author: Johan Aakerlund
+font author site: https://aajohan.deviantart.com/
+Slogan Font: WorkSans-Light.ttf
+
+icon designer: Saman Bemel-Benrud
+icon designer link: /samanbb
+        
+{"bg":"transparent","icon-gradient-0":"#288B58","icon-gradient-1":"#1522F1","font":"#000000","slogan":"#141414"}
+      

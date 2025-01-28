@@ -1,0 +1,15 @@
+/* Chrome, Edge, and Safari */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(50%) sepia(100%) saturate(200%) hue-rotate(200deg); /* Change the color */
+    cursor: pointer; /* Optional: Make the icon a pointer */
+}
+
+/* Remove default icon background */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background: none;
+}
+
+/* Firefox (icon cannot be styled, but input's color can be adjusted) */
+input[type="time"] {
+    color: #333; /* Input text color */
+}
