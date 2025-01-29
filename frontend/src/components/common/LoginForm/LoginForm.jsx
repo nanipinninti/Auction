@@ -3,17 +3,21 @@ import coverImage from "../../../assets/images/cover.png";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 const modeNames = {
     customer : "customer",
     auctioneer : "auctioneer",
     Franchise : "Franchise"
 }
 
+
 const LoginAPIs = {
-    customer : "http://localhost:5001/customer/login",
-    auctioneer : "http://localhost:5001/auctioneer/login",
-    Franchise : "http://localhost:5001/franchise/login"
-}
+    customer: `${DOMAIN}/customer/login`,
+    auctioneer: `${DOMAIN}/auctioneer/login`,
+    Franchise: `${DOMAIN}/franchise/login`
+};
+
 export default function LoginForm(){
     const [mode,setMode] = useState(modeNames.auctioneer)  
     const [username,setUsername] = useState("")  

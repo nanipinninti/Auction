@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom"
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 import NavBar from "@/components/layout/NavBar/NavBar"
 import Footer from "@/components/layout/Footer/footer"
@@ -13,26 +14,27 @@ import formatTimeToAmPm from "@/utils/time.format"
 
 const Options = [
     {
-        id : 1,
-        name : "All",
-        api : "http://localhost:5001/dashboard/auctions"
+        id: 1,
+        name: "All",
+        api: `${DOMAIN}/dashboard/auctions`
     },
     {
-        id : 2,
-        name : "Live",
-        api : "http://localhost:5001/dashboard/auctions?status=ongoing"
+        id: 2,
+        name: "Live",
+        api: `${DOMAIN}/dashboard/auctions?status=ongoing`
     },
     {
-        id : 3,
-        name : "Completed",
-        api : "http://localhost:5001/dashboard/auctions?status=completed"
+        id: 3,
+        name: "Completed",
+        api: `${DOMAIN}/dashboard/auctions?status=completed`
     },
     {
-        id : 4,
-        name : "Upcoming",
-        api : "http://localhost:5001/dashboard/auctions?status=upcoming"
+        id: 4,
+        name: "Upcoming",
+        api: `${DOMAIN}/dashboard/auctions?status=upcoming`
     }
-]
+];
+
 
 export default function Dashboard(){
     const [currentOption , setCurrentOption] = useState(Options[0])

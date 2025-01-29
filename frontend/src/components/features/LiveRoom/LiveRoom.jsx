@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
+
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 // utils
 import ModeCheck from "@/utils/modecheck";
 import NextBid from "@/utils/NextBid";
@@ -58,7 +61,7 @@ export default function LiveRoom() {
   }, [playerId]);
 
   const fetchAuctionDetails = async () => {
-    const api = `http://localhost:5001/auction-details/status?auction_id=${auction_id}`;
+    const api = `${DOMAIN}/auction-details/status?auction_id=${auction_id}`;
     const options = {
       method: "GET",
     };
@@ -80,7 +83,7 @@ export default function LiveRoom() {
   };
 
   const fetchPlayerDetails = async () => {
-    const api = `http://localhost:5001/auction-details/player?player_id=${playerId}&auction_id=${auction_id}`;
+    const api = `${DOMAIN}/auction-details/player?player_id=${playerId}&auction_id=${auction_id}`;
     const options = {
       method: "GET",
     };
@@ -100,7 +103,7 @@ export default function LiveRoom() {
 
   // auction actions for auctioneer
   const SendPlayer = async () => {
-    const api = "http://localhost:5001/auction-actions/send-player";
+    const api = `${DOMAIN}/auction-actions/send-player`;
     const options = {
       method: "POST",
       headers: {
@@ -125,7 +128,7 @@ export default function LiveRoom() {
   };
 
   const StartAuction = async () => {
-    const api = "http://localhost:5001/auction-actions/start-auction";
+    const api = `${DOMAIN}/auction-actions/start-auction`;
     const options = {
       method: "POST",
       headers: {
@@ -151,7 +154,7 @@ export default function LiveRoom() {
   };
 
   const PauseAuction = async () => {
-    const api = "http://localhost:5001/auction-actions/pause-auction";
+    const api = `${DOMAIN}/auction-actions/pause-auction`;
     const options = {
       method: "POST",
       headers: {
@@ -176,7 +179,7 @@ export default function LiveRoom() {
   };
 
   const SoldPlayer = async () => {
-    const api = "http://localhost:5001/auction-actions/sold-player";
+    const api =   `${DOMAIN}/auction-actions/sold-player`;
     const options = {
       method: "POST",
       headers: {
@@ -206,7 +209,7 @@ export default function LiveRoom() {
   };
   // auction actions for franchise
   const RaiseBid = async () => {
-    const api = "http://localhost:5001/auction-actions/raise-bid";
+    const api = `${DOMAIN}/auction-actions/raise-bid`;
     const options = {
       method: "POST",
       headers: {

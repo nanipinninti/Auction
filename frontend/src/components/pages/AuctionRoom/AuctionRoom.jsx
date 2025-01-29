@@ -2,6 +2,9 @@ import {useParams} from "react-router-dom"
 import LiveRoom from "@/components/features/LiveRoom/LiveRoom"
 import NavBar from "@/components/layout/NavBar/NavBar"
 import { useEffect } from "react"
+
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 const constNames = {
     completed : "completed",
     break : "break",
@@ -14,7 +17,7 @@ export default function AuctionRoom(){
     },[auction_id])
 
     const fetchFranchiseDetails= async()=>{
-        const api = `http://localhost:5001/auction/franchises?auction_id=${auction_id}`
+        const api = `${DOMAIN}/auction/franchises?auction_id=${auction_id}`
         const options = {
             method: "GET"
         };
