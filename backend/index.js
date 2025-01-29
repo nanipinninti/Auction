@@ -31,34 +31,34 @@ const io = new Server(server, {
 setupSocket(io);
 
 const adminAuthRouter = require("./routes/admin.auth.route");
-app.use("/api/admin", adminAuthRouter);
+app.use("/admin", adminAuthRouter);
 
 const customerAuthRouter = require("./routes/customer.auth.route");
-app.use("/api/customer", customerAuthRouter);
+app.use("/customer", customerAuthRouter);
 
 const auctionRouter = require("./routes/auction.route");
-app.use("/api/auction", auctionRouter);
+app.use("/auction", auctionRouter);
 
 const homeApis = require("./routes/home");
-app.use("/api/auctions", homeApis);
+app.use("/auctions", homeApis);
 
 const playersRouter = require("./routes/players.route");
-app.use("/api/players", playersRouter);
+app.use("/players", playersRouter);
 
 const franchiseAuthRouter = require("./routes/franchise.auth.route");
-app.use("/api/franchise", franchiseAuthRouter);
+app.use("/franchise", franchiseAuthRouter);
 
 const auctioneerAuthRouter = require("./routes/auctioneer.auth.route");
-app.use("/api/auctioneer", auctioneerAuthRouter);
+app.use("/auctioneer", auctioneerAuthRouter);
 
 const auctionActions = require("./routes/auction.actions");
-app.use("/api/auction-actions", auctionActions);
+app.use("/auction-actions", auctionActions);
 
 const auctionDetails = require("./routes/auction.details");
-app.use("/api/auction-details", auctionDetails);
+app.use("/auction-details", auctionDetails);
 
 const dashboardRouter = require("./routes/dashboard.route");
-app.use("/api/dashboard", dashboardRouter);
+app.use("/dashboard", dashboardRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Auction Backend");
