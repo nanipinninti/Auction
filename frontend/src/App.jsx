@@ -15,7 +15,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/auction-registration" element={<AuctionRegistration />} />       
           <Route path="/dashboard" element={<Dashboard />} />                   
-          <Route path="/aution-configurations" element={<AuctionConfigurations />} />   
+          <Route path="/aution-configurations/:auction_id" element={<AuctionConfigurations />} />   
         </Routes>
       </BrowserRouter>
   )

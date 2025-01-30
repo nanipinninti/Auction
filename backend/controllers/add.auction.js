@@ -99,76 +99,109 @@ const addSets = async (req, res) => {
     }
 };
 
-const addFranchises = async (req,res)=>{
-    const {franchiseData,auction_id} = req.body
-    const customer_id = req.customer_id
-    try{
-        const auction = await Auction.findOne({_id:auction_id})
-        if (!auction){
-            throw new Error("No auction found!")
-        }
-        if (customer_id !== auction.customer_id.toString()){
-            throw new Error("Invalid customer, this is not your auction!")
+const addFranchises = async (req, res) => {
+    const { franchiseData, auction_id } = req.body; // `franchiseData` contains new franchise data
+    const customer_id = req.customer_id; // Authenticated customer's ID
+
+    try {
+        // Step 1: Find the auction by auction_id
+        const auction = await Auction.findOne({ _id: auction_id });
+        if (!auction) {
+            return res.status(404).json({ message: "Auction not found" });
         }
 
-        const existingTeams = auction.franchises.map(obj=>obj.franchise_id.toString())
-        for (const newFranchise of franchiseData){
-            if (existingTeams.includes(newFranchise.franchise_id)){
-                throw new Error(`${newFranchise.franchise_id} franchise already listed in thist Auction!`)
-            }
+        // Step 2: Check if the customer_id matches the auction owner
+        if (auction.customer_id.toString() !== customer_id) {
+            return res.status(403).json({ message: "Invalid customer, this is not your auction" });
         }
 
-        auction.franchises.push(...franchiseData)
-        await auction.save()
+        // Step 3: Filter out empty or invalid franchise data
+        const filterEmptyFields = franchiseData.filter(
+            (obj) => obj.franchise_id && obj.franchise_id.trim() !== "" && obj.total_purse !== undefined
+        );
+
+        // Step 4: Check for duplicates in the incoming franchiseData
+        const franchiseIds = filterEmptyFields.map((obj) => obj.franchise_id.toString());
+        const hasDuplicates = franchiseIds.some((value, index, self) => self.indexOf(value) !== index);
+
+        if (hasDuplicates && filterEmptyFields.length > 0) {
+            return res.status(400).json({
+                message: `Duplicate franchise_id found in the request data`,
+            });
+        }
+
+        // Step 5: Replace existing franchises with the new franchiseData
+        auction.franchises = [...filterEmptyFields]; // Replace existing data with new data
+
+        // Step 6: Save the updated auction
+        await auction.save();
+
+        // Step 7: Send a success response
         res.status(201).json({
             message: "Franchises added successfully!",
-            sets: auction.franchises,
+            franchises: auction.franchises,
         });
-    }catch (error) {
-        console.error("Error during creating Franchises :", error);
+    } catch (error) {
+        console.error("Error during adding franchises:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message,
         });
     }
-}
+};
 
-const addAuctioneers = async (req,res)=>{
-    const {auctioneersData,auction_id} = req.body
-    const customer_id = req.customer_id
-    try{
-        const auction = await Auction.findOne({_id:auction_id})
-        if (!auction){
-            throw new Error("No auction found!")
-        }
-        if (customer_id !== auction.customer_id.toString()){
-            throw new Error("Invalid customer, this is not your auction!")
-        }
+const addAuctioneers = async (req, res) => {
+    const { auctioneersData, auction_id } = req.body; // `auctioneersData` contains new auctioneer data
+    const customer_id = req.customer_id; // Authenticated customer's ID
 
-        const existingAuctioneers = auction.auctioneers.map(obj=>obj.auctioneer_id.toString())
-        for (const newAuctioneer of auctioneersData){
-            if (existingAuctioneers.includes(newAuctioneer.auctioneer_id)){
-                throw new Error(`${newAuctioneer.auctioneer_id} Auctioneer already listed in this Auction!`)
-            }
+    try {
+        // Step 1: Find the auction by auction_id
+        const auction = await Auction.findOne({ _id: auction_id });
+        if (!auction) {
+            return res.status(404).json({ message: "Auction not found" });
         }
 
-        auction.auctioneers.push(...auctioneersData)
-        await auction.save()
+        // Step 2: Check if the customer_id matches the auction owner
+        if (auction.customer_id.toString() !== customer_id) {
+            return res.status(403).json({ message: "Invalid customer, this is not your auction" });
+        }
+
+        // Step 3: Filter out empty or invalid auctioneer data
+        const filterEmptyFields = auctioneersData.filter(
+            (obj) => obj.auctioneer_id && obj.auctioneer_id.trim() !== ""
+        );
+
+        // Step 4: Check for duplicates in the incoming auctioneersData
+        const auctioneerIds = filterEmptyFields.map((obj) => obj.auctioneer_id.toString());
+        const hasDuplicates = auctioneerIds.some((value, index, self) => self.indexOf(value) !== index);
+
+        if (hasDuplicates && filterEmptyFields.length > 0) {
+            return res.status(400).json({
+                message: `Duplicate auctioneer_id found in the request data`,
+            });
+        }
+
+        // Step 5: Replace existing auctioneers with the new auctioneersData
+        auction.auctioneers = [...filterEmptyFields]; // Replace existing data with new data
+
+        // Step 6: Save the updated auction
+        await auction.save();
+
+        // Step 7: Send a success response
         res.status(201).json({
             message: "Auctioneers added successfully!",
-            auctioneers : auction.auctioneers,
+            auctioneers: auction.auctioneers,
         });
-    }catch (error) {
-        console.error("Error during adding Auctioneers :", error);
+    } catch (error) {
+        console.error("Error during adding auctioneers:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message,
         });
     }
-}
-
+};
 
 
 module.exports = {addAuction,addSets,addAuctioneers ,addFranchises}

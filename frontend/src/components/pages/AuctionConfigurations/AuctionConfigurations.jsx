@@ -1,15 +1,17 @@
-import {useNavigate} from "react-router-dom"
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
 
 import NavBar from "@/components/layout/NavBar/NavBar"
 import Footer from "@/components/layout/Footer/footer"
-import AddPlayers from "@/components/features/AddPlayers/addplayers"
+import AddSets from "@/components/features/AddSets/addsets"
 
 // icons
 import { IoIosArrowDropup } from "react-icons/io";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
 import { GoPencil } from "react-icons/go";
+import AddPlayers from "@/components/features/AddPlayers/addplayers"
+import AddFranchises from "@/components/features/AddFranchises/addfranchises"
+import AddAuctioneers from "@/components/features/AddAuctioneers/addauctioneers"
 
 const src =
   "https://www.hindustantimes.com/static-content/1y/cricket-logos/players/virat-kohli.png";
@@ -135,10 +137,24 @@ export default function AuctionConfigurations(){
                         </div>
 
                         {/* In system Right Configurations */}
-                        <div className="w-full">
+                        <div className="w-full sm:w-5/6 flex flex-col gap-5">
                             {/* To add players */}
+                            <div className="flex flex-col sm:flex-row sm:justify-between gap-10 sm:gap-0">
+                                <div >
+                                    <h1 className="text-xl">Add Sets</h1>
+                                    <AddSets />
+                                </div>
+                                <div>
+                                    <h1 className="text-xl">Add Franchises</h1>
+                                    <AddFranchises />
+                                </div>
+                                <div>
+                                    <h1 className="text-xl">Add Auctioneers</h1>
+                                    <AddAuctioneers />
+                                </div>
+                            </div>
                             <div>
-                                <h1>Add Sets</h1>
+                                <h1 className="text-xl">Add Players</h1>
                                 <AddPlayers />
                             </div>
                         </div>

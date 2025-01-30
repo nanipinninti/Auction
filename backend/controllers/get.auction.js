@@ -117,4 +117,62 @@ const getFranchiseDetails = async (req,res)=>{
     }
 }
 
-module.exports = {getAuctionList,getAuctionDetailsByAuctionId,getFranchiseDetails}
+const getAuctioneerDetails = async (req,res)=>{
+    const {auction_id} = req.query
+    if (!auction_id) {
+        return res.status(400).json({ error: 'Auction ID is required' });
+    }
+    try{
+        const objectId = new mongoose.Types.ObjectId(auction_id);
+        const auction = await Auction.findOne({_id:objectId})
+
+        if(!auction){
+            return res.status(404).json({ error: 'Auction not found' });
+        }
+        const auctioneers = await Auction.aggregate([
+            {
+                $match: {
+                    _id: objectId
+                }
+            },
+            {
+                $unwind: "$auctioneers"
+            },
+            {
+                $lookup: {
+                    from: "auctioneers",
+                    localField: "auctioneers.auctioneer_id",
+                    foreignField: "_id",
+                    as: "Auctioneer"
+                }
+            },
+            {
+                $unwind: "$Auctioneer"
+            },
+            {
+                $project: {
+                    _id: "$Auctioneer._id",
+                    auctioneer_name: "$Auctioneer.auctioneer_name",
+                    auctioneer_url: "$Auctioneer.auctioneer_url",
+                    owner_name: "$Auctioneer.owner_name"
+                }
+            }
+        ]);
+        
+        // Transform into a map using _id as the key
+        const auctioneerMap = auctioneers.reduce((acc, item) => {
+            const { _id, ...rest } = item;
+            acc[_id] = rest; // Use _id as the key and the rest of the fields as the value
+            return acc;
+        }, {});
+    
+        return res.status(200).json(auctioneerMap)
+    }catch(error){
+        console.log("Error : ",error)
+        return res.status(201).json({
+            message : "Internval Servor Error"
+        })
+    }
+}
+
+module.exports = {getAuctionList,getAuctionDetailsByAuctionId,getFranchiseDetails,getAuctioneerDetails}

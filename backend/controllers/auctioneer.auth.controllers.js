@@ -105,4 +105,19 @@ const logout = (req, res) => {
     });
 };
 
-module.exports = { login, signup, logout };
+const auctioneersList = async (req,res)=>{
+    try{
+        const auctioneers = await Auctioneer.find().select("auctioneer_name")
+        res.status(200).json({
+            success : true,
+            auctioneers
+        })
+    }catch(error){
+        console.error("Error during fetching Auctioneers:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+}
+module.exports = { login, signup, logout,auctioneersList };

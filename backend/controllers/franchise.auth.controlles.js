@@ -107,4 +107,19 @@ const logout = (req, res) => {
     });
 };
 
-module.exports = { login, signup, logout };
+const franchisesList = async (req,res)=>{
+    try{
+        const franchises = await Franchise.find().select("franchise_name")
+        res.status(200).json({
+            success : true,
+            franchises
+        })
+    }catch(error){
+        console.error("Error during fetching franchises:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+}
+module.exports = { login, signup, logout,franchisesList };

@@ -104,7 +104,7 @@ export default function Dashboard(){
                             auctions.map((auction)=>{
                                 return(
                                 <div key={auction._id} className="flex flex-col gap-3 shadow border sm:w-[380px] rounded-md px-4 pt-4 pb-5 mt-2"
-                                    onClick={()=>{navigate("/aution-configurations")}}>
+                                    onClick={()=>{navigate(`/aution-configurations/${auction._id}`)}}>
                                         <div className="flex justify-between gap-5">
                                             <h1 className="text-[17px] uppercase">{auction.auction_name}</h1>
                                             <h1 className="text-[14px]">{auction.status}</h1>
