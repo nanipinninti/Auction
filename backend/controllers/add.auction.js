@@ -62,20 +62,26 @@ const addSets = async (req, res) => {
             return res.status(403).json({ message: "Invalid customer, this is not your auction" });
         }
 
-        // Step 3: Check for duplicate `set_no` in the existing `sets` array
-        const existingSetNos = auction.sets.map((set) => set.set_no);
-        for (const set of setData) {
-            if (existingSetNos.includes(set.set_no)) 
-                return res.status(400).json({
-                    message: `Set with set_no ${set.set_no} already exists`,
-                });
-            
+        const filterEmptyFields = setData.filter(obj => String(obj.set_no).trim() !== "" && obj.set_name.trim() !== "");
+
+
+        const hasDuplicates = filterEmptyFields
+            .map(item => String(item.set_no))  // Convert each set_no to a string
+            .some((value, index, self) => self.indexOf(value) !== index);
+
+        if (hasDuplicates && filterEmptyFields.length > 0) {
+            return res.status(400).json({
+                message: `Duplicate set_no found in the request data`
+            });
         }
 
-        // Step 4: Append the new sets to the `sets` array
-        auction.sets.push(...setData);
+        // Handle empty setData
+        if (filterEmptyFields.length === 0) {
+            auction.sets = [];
+        } else {
+            auction.sets = [...filterEmptyFields];
+        }
 
-        // Step 5: Save the updated auction document
         await auction.save();
 
         // Step 6: Send a success response

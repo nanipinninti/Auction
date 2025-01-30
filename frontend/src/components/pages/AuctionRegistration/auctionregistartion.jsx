@@ -2,8 +2,6 @@ import NavBar from "@/components/layout/NavBar/NavBar"
 import Footer from "@/components/layout/Footer/footer"
 import Cookies from "js-cookie"
 import { useState } from "react"
-const DOMAIN = import.meta.env.VITE_DOMAIN;
-
 import "./index.css"
 
 export default function AuctionRegistration(){
@@ -15,7 +13,7 @@ export default function AuctionRegistration(){
     const [auctionTime,setAuctionTime] = useState("")
 
     const RegisterAuction = async () => {
-        const api = `${DOMAIN}/auction/add-auction`
+        const api = "http://localhost:5001/auction/add-auction"
         const formData = new FormData()
         formData.append("auction_name", auctionName)
         formData.append("auction_date", auctionDate)

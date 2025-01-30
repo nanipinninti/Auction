@@ -47,7 +47,10 @@ const auctionSchema = new mongoose.Schema(
                 spent: { type: Number, default: 0 }
             }
         ],
-        sets: [setSchema],
+        sets: {
+            type: [setSchema],
+            default: []
+        },
         auctioneers: [
             {
                 auctioneer_id: {

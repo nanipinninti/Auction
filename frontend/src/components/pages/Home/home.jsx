@@ -2,8 +2,6 @@ import NavBar from "@/components/layout/NavBar/NavBar"
 import Footer from "@/components/layout/Footer/footer"
 import AuctionCard from "@/components/features/AuctionCard/AuctionCard"
 import { useEffect, useState } from "react"
-const DOMAIN = import.meta.env.VITE_DOMAIN;
-
 export default function Home(){
     const [liveAuctions,setLiveAuctions] = useState([])    
     const [completedAuctions,setCompletedAuctions] = useState([])
@@ -13,7 +11,7 @@ export default function Home(){
     },[])
 
     const fetchLiveAuctions = async ()=>{
-        const api = `${DOMAIN}/auctions/live`
+        const api = "http://localhost:5001/auctions/live"
         const options = {
             method : "GET"
         }
@@ -31,7 +29,7 @@ export default function Home(){
     }
 
     const fetchCompletedAuctions = async ()=>{
-        const api = `${DOMAIN}/auctions/completed`
+        const api = "http://localhost:5001/auctions/completed"
         const options = {
             method : "GET"
         }
