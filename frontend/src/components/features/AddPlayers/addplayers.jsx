@@ -130,26 +130,27 @@ export default function AddPlayers() {
         const newRows = [...rows];
         lines.forEach((line, i) => {
             if (!newRows[index + i]) newRows.push({ 
-                name: "", img: "", age: "", basePrice: "", country: "", type: "", 
+                name: "", img: "",setNo: "", age: "", basePrice: "", country: "", type: "", 
                 matchesPlayed: "", runs: "", avg: "", strikeRate: "", fifties: "", 
                 hundreds: "", wickets: "", bowlingAvg: "", threeWicketHaul: "", stumpings: "" 
             });
             newRows[index + i].name = line[0] || "";
-            newRows[index + i].img = line[1] || "";
-            newRows[index + i].age = line[2] || "";
-            newRows[index + i].basePrice = line[3] || "";
-            newRows[index + i].country = line[4] || "";
-            newRows[index + i].type = line[5] || "";
-            newRows[index + i].matchesPlayed = line[6] || "";
-            newRows[index + i].runs = line[7] || "";
-            newRows[index + i].avg = line[8] || "";
-            newRows[index + i].strikeRate = line[9] || "";
-            newRows[index + i].fifties = line[10] || "";
-            newRows[index + i].hundreds = line[11] || "";
-            newRows[index + i].wickets = line[12] || "";
-            newRows[index + i].bowlingAvg = line[13] || "";
-            newRows[index + i].threeWicketHaul = line[14] || "";
-            newRows[index + i].stumpings = line[15] || "";
+            newRows[index + i].img = line[1] || "";                   
+            newRows[index + i].setNo = line[2] || "";
+            newRows[index + i].age = line[3] || "";     
+            newRows[index + i].basePrice = line[4] || "";
+            newRows[index + i].country = line[5] || "";
+            newRows[index + i].type = line[6] || "";
+            newRows[index + i].matchesPlayed = line[7] || "";
+            newRows[index + i].runs = line[8] || "";
+            newRows[index + i].avg = line[9] || "";
+            newRows[index + i].strikeRate = line[10] || "";
+            newRows[index + i].fifties = line[11] || "";
+            newRows[index + i].hundreds = line[12] || "";
+            newRows[index + i].wickets = line[13] || "";
+            newRows[index + i].bowlingAvg = line[14] || "";
+            newRows[index + i].threeWicketHaul = line[15] || "";
+            newRows[index + i].stumpings = line[16] || "";
         });
         setRows(newRows);
     };

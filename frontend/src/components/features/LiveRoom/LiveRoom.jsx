@@ -8,8 +8,7 @@ import { alertTitleClasses } from "@mui/material";
 import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 
 import socket from "../../../socket/socket";
-const src =
-  "https://www.hindustantimes.com/static-content/1y/cricket-logos/players/virat-kohli.png";
+import PlayerStatus from "../PlayersStatus/playersstatus";
 
 const modeNames = {
   customer: "customer",
@@ -30,7 +29,12 @@ export default function LiveRoom() {
   const [currentStatus, setCurrentStatus] = useState(statusNames.loading);
   const [playerId, setPlayerId] = useState("");
   const [mode, setMode] = useState(ModeCheck());
+  const [setsInfo, setSetsInfo] = useState([]);
+  const [pickSet, setPickSet] = useState(1);
+
   const { auction_id } = useParams();
+
+  // For sockets
   useEffect(() => {
     fetchAuctionDetails();
     socket.connect();
@@ -51,6 +55,25 @@ export default function LiveRoom() {
     };
   }, [auction_id]);
 
+  useEffect(() => {
+    fetchSetsInfo();
+  }, []);
+
+  const fetchSetsInfo = async () => {
+    const api = `http://localhost:5001/auction-details/remaining-sets?auction_id=${auction_id}`;
+    const options = {
+      method: "GET",
+    };
+    try {
+      const response = await fetch(api, options);
+      if (response.ok) {
+        const data = await response.json();
+        setSetsInfo([...data.sets]);
+      }
+    } catch {
+      alert("Internal servor error");
+    }
+  };
   useEffect(() => {
     if (playerId) {
       fetchPlayerDetails();
@@ -194,8 +217,12 @@ export default function LiveRoom() {
       const response = await fetch(api, options);
       if (response.ok) {
         fetchAuctionDetails();
-        SendPlayer();        
-        alert(`Player  ${player_name} Sold to ${franchise_name} at ${toIndianCurrency(current_bid)}`);
+        SendPlayer();
+        alert(
+          `Player  ${player_name} Sold to ${franchise_name} at ${toIndianCurrency(
+            current_bid
+          )}`
+        );
         socket.emit("refresh");
       } else {
         alert("Failed to sold the Player");
@@ -232,7 +259,34 @@ export default function LiveRoom() {
     }
   };
 
-  const { player_name, base_price, age, country, Type } = playerDetails || {};
+  const PickSet = async () => {
+    const set_no = pickSet;
+    const api = "http://localhost:5001/auction-actions/pick-set";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
+      },
+      body: JSON.stringify({
+        auction_id,
+        set_no,
+      }),
+    };
+    try {
+      const response = await fetch(api, options);
+      if (response.ok) {
+        alert("Succesfully set the Set");
+      } else {
+        alert("Failed to Pick the set, Try again");
+      }
+    } catch (error) {
+      alert("Servor Error");
+    }
+  };
+
+  const { player_name, base_price, age, country, Type, image_url } =
+    playerDetails || {};
   const {
     matches_played,
     runs,
@@ -250,12 +304,40 @@ export default function LiveRoom() {
   if (currentStatus === statusNames.pause) {
     return (
       <>
-        {mode === modeNames.auctioneer && (
-          <div className="flex flex-col items-center">
+        {mode === modeNames.auctioneer ? (
+          <div className="flex flex-col items-center gap-4">
             {/* Profile and stats */}
+            <div className="px-4 rounded-xl text-sm py-3">
+              <h1>Pick the Set</h1>
+              <select
+                className="bg-transparent text-black border rounded w-[200px] p-2 mt-2"
+                id="current-set"
+                onChange={(e) => setPickSet(Number(e.target.value))} // Handle selection change
+              >
+                {setsInfo
+                  .filter((set) => set.status === "Available") // Filter available sets
+                  .map((set) => (
+                    <option key={set.set_no} value={set.set_no}>
+                      {set.set_name} {/* Display set name */}
+                    </option>
+                  ))}
+              </select>
+              <button
+                className="block bg-green-400 rounded text-white p-2 py-1 mt-2"
+                onClick={() => {
+                  PickSet();
+                }}
+              >
+                Save
+              </button>
+            </div>
             <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
               <button onClick={StartAuction}>Start the auction</button>
             </div>
+          </div>
+        ) : (
+          <div className="mt-3">
+            <h1>Auction Yet to be Start! Please Wait !</h1>
           </div>
         )}
       </>
@@ -278,7 +360,7 @@ export default function LiveRoom() {
           <div className="flex flex-col items-center w-full sm:w-1/2">
             <div>
               <img
-                src={src}
+                src={image_url}
                 alt={player_name}
                 className="rounded object-cover w-[250px] h-[300px]"
               />
@@ -382,7 +464,8 @@ export default function LiveRoom() {
             {Cookies.get("franchise_id") !== current_franchise ? (
               <div className="bg-[#615FFF] text-white px-2 rounded-xl text-sm py-1 h-full">
                 <button onClick={RaiseBid}>
-                  Raise Bid <br />
+                  Raise Bid
+                  <br />
                   {toIndianCurrency(NextBid(current_bid))}
                 </button>
               </div>
@@ -413,10 +496,15 @@ export default function LiveRoom() {
             </div>
 
             <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
-              <button >Unsold</button>
+              <button>Unsold</button>
             </div>
           </div>
         )}
+      </div>
+
+      {/* Player Stats */}
+      <div>
+          <PlayerStatus />
       </div>
     </div>
   );

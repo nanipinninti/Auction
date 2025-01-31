@@ -54,11 +54,11 @@ const PickSet = async (req,res)=>{
         return res.status(400).json({ message: "Set Number is missing" });
     }
     try {
-        const set_no_existed = auction.sets.some(set=>set.set_no === set_no.toString())
+        const set_no_existed = auction.sets.some(set=>set.set_no.toString() === set_no.toString())
         if (!set_no_existed){        
             return res.status(400).json({ message: "Set doesn't existed" });
         }
-        auction.current_set = set_no
+        auction.auction_details.current_set = set_no
         await auction.save()
         
         res.status(201).json({
@@ -79,11 +79,9 @@ const SendPlayer = async (req,res)=>{
     try {
         const current_set_no = auction.auction_details.current_set
         const players = auction.players
-                .filter(player=>player.set_no === current_set_no && player.status === "Available")
+                .filter(player=>player.set_no.toString() === current_set_no.toString() && player.status === "Available")
                 .map(player=>({player_id : player._id,base_price : player.base_price}))
-
         const randomPlayer = players[Math.floor(Math.random() * players.length)];
-
         auction.auction_details.current_player = randomPlayer.player_id
         auction.auction_details.current_bid = randomPlayer.base_price        
         auction.auction_details.current_franchise = "#"
@@ -276,7 +274,7 @@ const EndAuction = async (req, res) => {
 };
 
 
-module.exports = { SoldPlayer,SendPlayer,StartAuction ,PauseAuction,EndAuction,RaiseBid,UnSoldPlayer};
+module.exports = { SoldPlayer,SendPlayer,StartAuction ,PickSet,PauseAuction,EndAuction,RaiseBid,UnSoldPlayer};
 
 
 // const StartAuction = async (req,res)=>{

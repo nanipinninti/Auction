@@ -39,6 +39,66 @@ const GetSets = async (req,res)=>{
     }
 }
 
+const RemainingSets = async (req, res) => {
+    const { auction_id } = req.query;
+
+    if (!auction_id) {
+        return res.status(401).json({
+            success: false,
+            message: "Auction Id is required",
+        });
+    }
+
+    try {
+        // Find the auction by ID and select the necessary fields
+        const auction = await Auction.findOne({ _id: auction_id }).select('sets players');
+
+        if (!auction) {
+            return res.status(401).json({
+                success: false,
+                message: "Auction doesn't exist",
+            });
+        }
+
+        // Extract sets and players from the auction
+        const { sets, players } = auction;
+
+        // Create a result array to store the status of each set
+        const setStatus = [];
+
+        // Iterate through each set
+        for (const set of sets) {
+            const { set_no ,set_name} = set;
+
+            // Check if any player in this set is still available
+            const hasAvailablePlayer = players.some(
+                (player) => player.set_no === set_no && player.status === "Available"
+            );
+
+            // Determine the status of the set
+            const status = hasAvailablePlayer ? "Available" : "Completed";
+
+            // Add the set status to the result array
+            setStatus.push({
+                set_no,
+                set_name,
+                status,
+            });
+        }
+
+        return res.status(201).json({
+            success: true,
+            sets: setStatus,
+        });
+    } catch (error) {
+        console.log("Error while getting remaining sets: ", error);
+        res.status(501).json({
+            success: false,
+            error: error.message,
+        });
+    }
+};
+
 const PlayerDetails = async (req,res)=>{
     const {player_id,auction_id} = req.query
     if (!player_id || !auction_id){
@@ -245,4 +305,4 @@ const TopBuys = async (req,res)=>{
     }
 }
 
-module.exports = {SoldPlayers,UnSoldPlayers,TopBuys ,CurrentStatus,GetSets,PlayerDetails}
+module.exports = {SoldPlayers,UnSoldPlayers,TopBuys ,CurrentStatus,GetSets,PlayerDetails,RemainingSets}

@@ -6,8 +6,6 @@ function filterValidObjects(arr) {
     );
 }
 const addPlayers = async (req, res) => {
-
-    // Bug, we have to remove empty spaces objects
     const { players, auction_id } = req.body; // Players and auction_id
     const customer_id = req.customer_id; // Authenticated customer's ID
 
@@ -23,31 +21,50 @@ const addPlayers = async (req, res) => {
             return res.status(403).json({ message: "Invalid customer, this is not your auction" });
         }
 
-        // Step 3: Process each player and their requested set
-        const filteredEmptyFieldsOfPlayersData = filterValidObjects(players);
-        if (filteredEmptyFieldsOfPlayersData.length !==0 ){
-            for (let player of players) {
+        // Step 3: Filter out invalid players
+        const filteredPlayers = players.filter(player => 
+            player.set_no &&
+            player.player_name &&
+            player.base_price &&
+            player.age &&
+            player.country &&
+            player.Type &&
+            player.stats &&
+            player.stats.matches_played !== undefined &&
+            player.stats.runs !== undefined &&
+            player.stats.avg !== undefined &&
+            player.stats.strike_rate !== undefined &&
+            player.stats.fifties !== undefined &&
+            player.stats.hundreds !== undefined &&
+            player.stats.wickets !== undefined &&
+            player.stats.bowling_avg !== undefined &&
+            player.stats.three_wicket_haul !== undefined &&
+            player.stats.stumpings !== undefined
+        );
+
+        if (filteredPlayers.length === 0) {
+            auction.players = [];
+        } else {
+            for (let player of filteredPlayers) {
                 const { set_no } = player;
 
                 // Step 4: Find the set by set_no in the `sets` array
                 let set = auction.sets.find((s) => s.set_no.toString() === set_no.toString());
                 if (!set) {
-                    throw new Error("Set doesn't existed")
+                    return res.status(400).json({ message: `Set ${set_no} does not exist` });
                 }
             }
+
+            auction.players = filteredPlayers;
         }
-        if (filteredEmptyFieldsOfPlayersData.length ===0){
-            auction.players = []
-        }else{
-            auction.players = [...players]
-        }
+
         // Step 6: Save the updated auction document
         await auction.save();
 
         // Step 7: Send a success response
         res.status(201).json({
             message: "Players added successfully!",
-            players : auction.players,
+            players: auction.players,
         });
     } catch (error) {
         console.error("Error during adding players:", error);
