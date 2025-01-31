@@ -6,7 +6,8 @@ const generateAuctioneerToken  = (res,_id)=>{
     )
     res.cookie("auctioneer_token", token, {
         httpOnly: true,
-        sameSite: true,
+        sameSite: "None",
+        secure : true,
         maxAge: 7 * 24 * 60 * 60 * 1000, 
       });
           //   console.log("Generated TOken : " ,token)

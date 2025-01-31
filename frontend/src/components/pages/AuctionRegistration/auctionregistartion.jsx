@@ -26,6 +26,7 @@ export default function AuctionRegistration(){
 
         const options = {
             method: "POST",
+            credentials: "include", 
             headers: {
                 "Authorization": `Bearer ${Cookies.get("customer_token") }`
             },

@@ -209,6 +209,7 @@ export default function AddPlayers() {
         try {
             const response = await fetch(`http://localhost:5001/players/add`, {
                 method: 'POST',
+                credentials: "include", 
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${Cookies.get("customer_token")}`

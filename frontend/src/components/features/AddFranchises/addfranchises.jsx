@@ -84,6 +84,7 @@ export default function AddFranchises() {
             // Make the API call
             const response = await fetch(`${DOMAIN}/auction/add-franchises`, {
                 method: "POST",
+                credentials: "include", 
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${Cookies.get("customer_token")}`, // Add bearer token

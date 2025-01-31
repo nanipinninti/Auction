@@ -128,6 +128,7 @@ export default function LiveRoom() {
     const api =  `${DOMAIN}/auction-actions/send-player`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
@@ -153,6 +154,7 @@ export default function LiveRoom() {
     const api = `${DOMAIN}/auction-actions/start-auction`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
@@ -179,6 +181,7 @@ export default function LiveRoom() {
     const api = `${DOMAIN}/auction-actions/pause-auction`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
@@ -204,6 +207,7 @@ export default function LiveRoom() {
     const api = `${DOMAIN}/auction-actions/sold-player`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
@@ -238,6 +242,7 @@ export default function LiveRoom() {
     const api = `${DOMAIN}/auction-actions/un-sold-player`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
@@ -265,6 +270,7 @@ export default function LiveRoom() {
     const api = `${DOMAIN}/auction-actions/raise-bid`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("franchise_token")}`,
@@ -293,6 +299,7 @@ export default function LiveRoom() {
     const api =  `${DOMAIN}/auction-actions/pick-set`;
     const options = {
       method: "POST",
+      credentials: "include", 
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,

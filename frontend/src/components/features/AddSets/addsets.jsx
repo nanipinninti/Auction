@@ -129,6 +129,7 @@ export default function AddSets() {
         try {
             const response = await fetch(`${DOMAIN}/auction/add-sets`, {
                 method: 'POST',
+                credentials: "include", 
                 headers: { 
                     'Content-Type': 'application/json' ,
                     'Authorization': `Bearer ${Cookies.get("customer_token")}`

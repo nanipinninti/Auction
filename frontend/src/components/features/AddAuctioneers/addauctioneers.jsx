@@ -82,6 +82,7 @@ export default function AddAuctioneers() {
             // Make the API call
             const response = await fetch(`${DOMAIN}/auction/add-auctioneers`, {
                 method: "POST",
+                credentials: "include", 
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${Cookies.get("customer_token")}`, // Add bearer token

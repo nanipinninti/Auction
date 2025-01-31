@@ -6,7 +6,8 @@ const generateFranchiseToken  = (res,_id)=>{
     )
     res.cookie("franchise_token", token, {
         httpOnly: true,
-        sameSite: true,
+        sameSite: "None",
+        secure : true,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
     return token
