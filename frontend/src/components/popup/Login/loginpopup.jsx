@@ -11,7 +11,6 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import {useNavigate} from "react-router-dom"
 
 // icons
