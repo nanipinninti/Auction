@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import Cookies from "js-cookie"
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 import NavBar from "@/components/layout/NavBar/NavBar"
 import Footer from "@/components/layout/Footer/footer"
@@ -14,7 +15,7 @@ import AddFranchises from "@/components/features/AddFranchises/addfranchises"
 import AddAuctioneers from "@/components/features/AddAuctioneers/addauctioneers"
 
 const src =
-  "https://www.hindustantimes.com/static-content/1y/cricket-logos/players/virat-kohli.png";
+    "https://www.jagranimages.com/images/newimg/21082020/21_08_2020-ipl_logo_20650553.jpg";
 
 export default function AuctionConfigurations(){
     const [showEdit,setShowEdit] = useState(true)

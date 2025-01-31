@@ -111,7 +111,7 @@ export default function Dashboard(){
                                         </div>
                                         <div className="flex gap-4">                                          
                                             <div className="3/5">
-                                                <img src={auction.auction_img} alt="auction" 
+                                                <img src={`${DOMAIN}${auction.auction_img}`} alt="auction" 
                                                 className="w-[200px] h-[230px] object-cover rounded" />
                                             </div>
                                             <div className="flex flex-col gap-2 w-2/5">  

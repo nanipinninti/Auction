@@ -2,6 +2,7 @@ import {useParams} from "react-router-dom"
 import LiveRoom from "@/components/features/LiveRoom/LiveRoom"
 import NavBar from "@/components/layout/NavBar/NavBar"
 import { useEffect } from "react"
+import Footer from "@/components/layout/Footer/footer";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -38,10 +39,11 @@ export default function AuctionRoom(){
     return(
         <div className="min-h-screen min-w-screen">
             <NavBar />
-            <div className="px-[25px] sm:px-[30px] mt-3">
-                <h1 className="text-xl font-semibold">GPL</h1>
+            <div className="px-[25px] sm:px-[30px] mt-3 max-w-[1400px] mx-auto">
+                <h1 className="text-xl font-semibold my-5">Indian Premier League</h1>
                 <LiveRoom />
             </div>
+            <Footer/>
         </div>
     )
 }

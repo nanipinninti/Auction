@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import Cookies from "js-cookie"; // Import Cookies library
 import { useParams } from "react-router-dom";
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 export default function AddFranchises() {
     const [franchises, setFranchises] = useState([]); // State to store all franchises
@@ -18,7 +19,7 @@ export default function AddFranchises() {
         const fetchFranchises = async () => {
             try {
                 // Fetch all franchises
-                const franchisesResponse = await fetch("http://localhost:5001/franchise/list");
+                const franchisesResponse = await fetch(`${DOMAIN}/franchise/list`);
                 const franchisesData = await franchisesResponse.json();
 
                 if (franchisesData.success) {
@@ -30,7 +31,7 @@ export default function AddFranchises() {
 
                 // Fetch initial franchises for the auction
                 const initialFranchisesResponse = await fetch(
-                    `http://localhost:5001/auction/franchises?auction_id=${auction_id}`
+                    `${DOMAIN}/auction/franchises?auction_id=${auction_id}`
                 );
                 const initialFranchisesData = await initialFranchisesResponse.json();
 
@@ -81,7 +82,7 @@ export default function AddFranchises() {
             });
 
             // Make the API call
-            const response = await fetch("http://localhost:5001/auction/add-franchises", {
+            const response = await fetch(`${DOMAIN}/auction/add-franchises`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

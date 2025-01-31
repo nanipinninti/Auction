@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import Cookies from "js-cookie";
 import { useParams } from "react-router-dom";
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 export default function AddPlayers() {
     const [rows, setRows] = useState([{ 
@@ -20,7 +21,7 @@ export default function AddPlayers() {
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch(`http://localhost:5001/players/all?auction_id=${auction_id}`, {
+                const response = await fetch(`${DOMAIN}/players/all?auction_id=${auction_id}`, {
                     headers: {
                         Authorization: `Bearer ${Cookies.get("customer_token")}`,
                     },

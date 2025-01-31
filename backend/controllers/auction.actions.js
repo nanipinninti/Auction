@@ -220,12 +220,12 @@ const SoldPlayer = async (req, res) => {
 };
 
 const UnSoldPlayer = async (req,res)=>{
-    const auction = req.auction;
-    const {player_id} = req.body
-    if (!player_id || !amount) {
+    const {player_id , auction_id} = req.body
+    if (!player_id) {
         return res.status(400).json({ message: "Player id is missing!" });
     }
     try {
+        const auction = await Auction.findOne({_id : auction_id})
         const player = auction.players.find(
             (player) => player._id.toString() === player_id
         );

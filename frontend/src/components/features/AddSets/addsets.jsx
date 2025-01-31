@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import Cookies from "js-cookie";
 import {useParams} from "react-router-dom"
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 export default function AddSets() {
     const [rows, setRows] = useState([{ setNo: "", setName: "" }]);
@@ -14,7 +15,7 @@ export default function AddSets() {
     useEffect(() => {
         const fetchSets = async () => {
             try {
-                const response = await fetch(`http://localhost:5001/auction-details/sets?auction_id=${AuctionId}`);
+                const response = await fetch(`${DOMAIN}/auction-details/sets?auction_id=${AuctionId}`);
                 const data = await response.json();
                 if (data.success) {
                     const fetchedRows = data.sets.map(set => ({
@@ -126,7 +127,7 @@ export default function AddSets() {
         };
 
         try {
-            const response = await fetch('http://localhost:5001/auction/add-sets', {
+            const response = await fetch(`${DOMAIN}/auction/add-sets`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json' ,

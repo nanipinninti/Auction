@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
+const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 // utils
 import ModeCheck from "@/utils/modecheck";
 import NextBid from "@/utils/NextBid";
@@ -60,7 +62,7 @@ export default function LiveRoom() {
   }, []);
 
   const fetchSetsInfo = async () => {
-    const api = `http://localhost:5001/auction-details/remaining-sets?auction_id=${auction_id}`;
+    const api = `${DOMAIN}/auction-details/remaining-sets?auction_id=${auction_id}`;
     const options = {
       method: "GET",
     };
@@ -81,7 +83,7 @@ export default function LiveRoom() {
   }, [playerId]);
 
   const fetchAuctionDetails = async () => {
-    const api = `http://localhost:5001/auction-details/status?auction_id=${auction_id}`;
+    const api = `${DOMAIN}/auction-details/status?auction_id=${auction_id}`;
     const options = {
       method: "GET",
     };
@@ -103,7 +105,7 @@ export default function LiveRoom() {
   };
 
   const fetchPlayerDetails = async () => {
-    const api = `http://localhost:5001/auction-details/player?player_id=${playerId}&auction_id=${auction_id}`;
+    const api = `${DOMAIN}/auction-details/player?player_id=${playerId}&auction_id=${auction_id}`;
     const options = {
       method: "GET",
     };
@@ -123,7 +125,7 @@ export default function LiveRoom() {
 
   // auction actions for auctioneer
   const SendPlayer = async () => {
-    const api = "http://localhost:5001/auction-actions/send-player";
+    const api =  `${DOMAIN}/auction-actions/send-player`;
     const options = {
       method: "POST",
       headers: {
@@ -148,7 +150,7 @@ export default function LiveRoom() {
   };
 
   const StartAuction = async () => {
-    const api = "http://localhost:5001/auction-actions/start-auction";
+    const api = `${DOMAIN}/auction-actions/start-auction`;
     const options = {
       method: "POST",
       headers: {
@@ -174,7 +176,7 @@ export default function LiveRoom() {
   };
 
   const PauseAuction = async () => {
-    const api = "http://localhost:5001/auction-actions/pause-auction";
+    const api = `${DOMAIN}/auction-actions/pause-auction`;
     const options = {
       method: "POST",
       headers: {
@@ -199,7 +201,7 @@ export default function LiveRoom() {
   };
 
   const SoldPlayer = async () => {
-    const api = "http://localhost:5001/auction-actions/sold-player";
+    const api = `${DOMAIN}/auction-actions/sold-player`;
     const options = {
       method: "POST",
       headers: {
@@ -231,9 +233,36 @@ export default function LiveRoom() {
       alert("Failed to sold the Player, Internal servor error");
     }
   };
+
+  const UnSoldPlayer = async () => {
+    const api = `${DOMAIN}/auction-actions/un-sold-player`;
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
+      },
+      body: JSON.stringify({
+        auction_id,
+        player_id: playerId,
+      }),
+    };
+    try {
+      const response = await fetch(api, options);
+      if (response.ok) {
+        fetchAuctionDetails();
+        SendPlayer();
+        socket.emit("refresh");
+      } else {
+        alert("Failed to Unsold the Players");
+      }
+    } catch (error) {
+      alert("Failed to Un Sold the Player, Internal servor error");
+    }
+  };
   // auction actions for franchise
   const RaiseBid = async () => {
-    const api = "http://localhost:5001/auction-actions/raise-bid";
+    const api = `${DOMAIN}/auction-actions/raise-bid`;
     const options = {
       method: "POST",
       headers: {
@@ -261,7 +290,7 @@ export default function LiveRoom() {
 
   const PickSet = async () => {
     const set_no = pickSet;
-    const api = "http://localhost:5001/auction-actions/pick-set";
+    const api =  `${DOMAIN}/auction-actions/pick-set`;
     const options = {
       method: "POST",
       headers: {
@@ -305,7 +334,7 @@ export default function LiveRoom() {
     return (
       <>
         {mode === modeNames.auctioneer ? (
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-4 min-h-screen">
             {/* Profile and stats */}
             <div className="px-4 rounded-xl text-sm py-3">
               <h1>Pick the Set</h1>
@@ -336,7 +365,7 @@ export default function LiveRoom() {
             </div>
           </div>
         ) : (
-          <div className="mt-3">
+          <div className="mt-3 min-h-screen">
             <h1>Auction Yet to be Start! Please Wait !</h1>
           </div>
         )}
@@ -496,7 +525,7 @@ export default function LiveRoom() {
             </div>
 
             <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
-              <button>Unsold</button>
+              <button onClick={UnSoldPlayer}>Unsold</button>
             </div>
           </div>
         )}

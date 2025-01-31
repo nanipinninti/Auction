@@ -49,7 +49,7 @@ const uploadAuctionImage = (req, res, next) => {
         }
 
         // Generate the full URL (Replace `localhost` and port with actual host if needed)
-        const fullUrl = `http://localhost:5001/uploads/auctions/${req.file.filename}`;
+        const fullUrl = `/uploads/auctions/${req.file.filename}`;
 
         // Attach the full image URL to the request object
         req.auction_img_url = fullUrl;

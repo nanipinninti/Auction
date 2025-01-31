@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import Cookies from "js-cookie"; // Import Cookies library
 import { useParams } from "react-router-dom";
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 export default function AddAuctioneers() {
     const [auctioneers, setAuctioneers] = useState([]); // State to store all auctioneers
@@ -17,7 +18,7 @@ export default function AddAuctioneers() {
         const fetchAuctioneers = async () => {
             try {
                 // Fetch all auctioneers
-                const auctioneersResponse = await fetch("http://localhost:5001/auctioneer/list");
+                const auctioneersResponse = await fetch(`${DOMAIN}/auctioneer/list`);
                 const auctioneersData = await auctioneersResponse.json();
 
                 if (auctioneersData.success) {
@@ -29,7 +30,7 @@ export default function AddAuctioneers() {
 
                 // Fetch initial auctioneers for the auction (assuming similar API to franchises)
                 const initialAuctioneersResponse = await fetch(
-                    `http://localhost:5001/auction/auctioneers?auction_id=${auction_id}`
+                    `${DOMAIN}/auction/auctioneers?auction_id=${auction_id}`
                 );
                 const initialAuctioneersData = await initialAuctioneersResponse.json();
 
@@ -79,7 +80,7 @@ export default function AddAuctioneers() {
             });
 
             // Make the API call
-            const response = await fetch("http://localhost:5001/auction/add-auctioneers", {
+            const response = await fetch(`${DOMAIN}/auction/add-auctioneers`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
