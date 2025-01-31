@@ -4,9 +4,9 @@ const generateAuctioneerToken = (res, _id) => {
     const token = jwt.sign({ _id }, process.env.AUCTIONEER_JWT_TOKEN, { expiresIn: "3d" });
 
     res.cookie("auctioneer_token", token, {
-        httpOnly: true,  // Prevents JavaScript from accessing the cookie (for security)
+        httpOnly: true,  // Prevents JavaScript from accessing the cookie
         sameSite: "None", // Required for cross-site cookies
-        secure: true,  // Required for HTTPS environments
+        secure: process.env.NODE_ENV === "production", // HTTPS only in production
         maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
     });
 
