@@ -1,36 +1,43 @@
 const { Server } = require("socket.io");
 const express = require("express");
 const http = require("http");
-const cors = require("cors"); // Import CORS middleware
+const cors = require("cors");
 const connectDB = require("./db/connectDB");
 const { setupSocket } = require("./socketServer");
 const cookieParser = require("cookie-parser");
-const path = require('path');
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
 
-app.use(cookieParser());
-app.use(express.json());
-
+// CORS configuration
 app.use(
   cors({
-    origin : "*",
-    credentials : true
+    origin: ["http://localhost:5173",process.env.FRONT_END_DOMAIN], // Replace with your frontend URL(s)
+    credentials: true, // Allow credentials
   })
 );
 
-// Serve the folder as static
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cookieParser());
+app.use(express.json());
+
+// Serve static files
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const server = http.createServer(app);
+
+// Socket.IO configuration
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins for WebSocket
+    origin: ["http://localhost:5173",process.env.FRONT_END_DOMAIN], 
+    methods: ["GET", "POST"], 
+    credentials: true, 
   },
 });
+
 setupSocket(io);
 
+// Routes
 const adminAuthRouter = require("./routes/admin.auth.route");
 app.use("/admin", adminAuthRouter);
 
@@ -64,8 +71,9 @@ app.use("/dashboard", dashboardRouter);
 app.get("/", (req, res) => {
   res.send("Welcome to Auction Backend");
 });
+
 const PORT = process.env.PORT || 5001;
-server.listen(PORT,'0.0.0.0' ,() => {
+server.listen(PORT, "0.0.0.0", () => {
   connectDB();
   console.log("Port running on", PORT);
 });

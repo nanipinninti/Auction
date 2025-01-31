@@ -48,44 +48,20 @@ export default function LoginForm(){
           const response = await fetch(api, options);
           if (response.ok) {
             const data = await response.json();
-            if (data.auctioneer_token) {
-              Cookies.set("auctioneer_token", data.auctioneer_token, {
-                expires: 7,
-                path: "/",
-                sameSite: "None", // Allow cross-origin cookies
-                secure: true, // Required for SameSite=None
-              });
-              console.log(data.auctioneer_token, Cookies.get("auctioneer_token"));
-            }
-            if (data.customer_token) {
-              Cookies.set("customer_token", data.customer_token, {
-                expires: 7,
-                path: "/",
-                sameSite: "None",
-                secure: true,
-              });
-            }
             if (data.franchise_token) {
-              Cookies.set("franchise_token", data.franchise_token, {
-                expires: 7,
-                path: "/",
-                sameSite: "None",
-                secure: true,
-              });
               Cookies.set("franchise_id", data.franchise._id, {
                 expires: 7,
                 path: "/",
                 sameSite: "None",
                 secure: true,
               });
-            }
-      
+            }      
             navigate("/");
           } else {
             alert("Incorrect credentials");
           }
         } catch (error) {
-          alert("Failed to Login");
+          alert("Servor Error");
         }
       };
       

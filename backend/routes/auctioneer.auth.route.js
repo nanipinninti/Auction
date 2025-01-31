@@ -6,5 +6,4 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.post("/signup", signup);
 router.get("/list", auctioneersList);
-
 module.exports = router;

@@ -13,5 +13,9 @@ router.post("/pause-auction", verifyAuctioneerToken,validateAuctionAuctioneer,Pa
 router.post("/end-auction", verifyAuctioneerToken,validateAuctionAuctioneer,EndAuction);
 router.post("/send-player", verifyAuctioneerToken,validateAuctionAuctioneer,SendPlayer);
 router.post("/raise-bid", verifyFranchiseToken,validateAuctionFranchise,RaiseBid);
+router.get("/test", verifyAuctioneerToken, (req,res)=>{
+    console.log("Successfully maked request")
+    res.status(201).json({message : "success"})
+});
 
 module.exports = router;

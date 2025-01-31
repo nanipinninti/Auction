@@ -1,12 +1,16 @@
-const jwt = require("jsonwebtoken")
-const generateAuctioneerToken  = (res,_id)=>{
-    const token = jwt.sign({_id},
-        process.env.AUCTIONEER_JWT_TOKEN,
-        {expiresIn : "3d"}
-    )
-          //   console.log("Generated TOken : " ,token)
-    //   console.log("Key used to generate : ",process.env.AUCTIONEER_JWT_TOKEN);
-      
-    return token
-}
-module.exports = generateAuctioneerToken
+const jwt = require("jsonwebtoken");
+
+const generateAuctioneerToken = (res, _id) => {
+    const token = jwt.sign({ _id }, process.env.AUCTIONEER_JWT_TOKEN, { expiresIn: "3d" });
+
+    res.cookie("auctioneer_token", token, {
+        httpOnly: true,  // Prevents JavaScript from accessing the cookie (for security)
+        sameSite: "None", // Required for cross-site cookies
+        secure: true,  // Required for HTTPS environments
+        maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
+    });
+
+    return token;
+};
+
+module.exports = generateAuctioneerToken;

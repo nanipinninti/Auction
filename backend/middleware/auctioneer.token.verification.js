@@ -1,24 +1,43 @@
 const jwt = require("jsonwebtoken");
 
 const verifyAuctioneerToken = (req, res, next) => {
-    // Extract token from cookies or Authorization header
-    const token = req.cookies.auctioneer_token || 
-                  (req.headers.authorization && req.headers.authorization.split(" ")[1]); 
+  try {
+    // Extract token from cookies
+    const token = req.cookies.auctioneer_token;
+
+    // Debugging: Log cookies to verify token extraction
+    console.log("Cookies:", req.cookies);
 
     if (!token) {
-        return res.status(403).send({ message: "No token provided." });
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized: No token provided" });
     }
 
+    // Verify the token
     jwt.verify(token, process.env.AUCTIONEER_JWT_TOKEN, (err, decoded) => {
-        if (err) {
-            console.log("Invalid Token:", token);
-            return res.status(500).send({ message: "Failed to authenticate token." });
-        }
+      if (err) {
+        console.error("Token verification error:", err);
+        return res
+          .status(403)
+          .json({ success: false, message: "Forbidden: Invalid token" });
+      }
 
-        // If everything is good, save the decoded token to request for use in other routes
-        req.auctioneer_id = decoded._id;
-        next();
+      // Attach auctioneer ID to the request object
+      req.auctioneer_id = decoded._id;
+
+      // Debugging: Log the decoded token
+      console.log("Decoded Token:", decoded);
+
+      // Proceed to the next middleware or route handler
+      next();
     });
+  } catch (error) {
+    console.error("Internal server error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
 };
 
 module.exports = { verifyAuctioneerToken };
