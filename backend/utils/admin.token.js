@@ -4,7 +4,7 @@ const generateAdminToken  = (res,_id)=>{
         process.env.ADMIN_JWT_TOKEN,
         {expiresIn : "3d"}
     )
-    res.cookie("admin_token", token, {
+    res.cookie("admin_token_", token, {
         httpOnly: true,
         sameSite: "None",
         secure : true,

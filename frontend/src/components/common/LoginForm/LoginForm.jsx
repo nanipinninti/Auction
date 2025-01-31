@@ -36,6 +36,7 @@ export default function LoginForm(){
         }
         const options = {
             method: "POST",
+            credential : "include",
             headers: {
                 "Content-Type": "application/json", // Setting Content-Type as JSON
             },
@@ -47,7 +48,7 @@ export default function LoginForm(){
             if (response.ok){
                 const data = await response.json()
                 if (data.auctioneer_token) {
-                    Cookies.set("auctioneer_token", data.auctioneer_token, { expires: 7 });
+                    Cookies.set("auctioneer_token", data.auctioneer_token, { expires: 7,path : "/",sameSite: "Lax"  });
                 }
                 if (data.customer_token) {
                     Cookies.set("customer_token", data.customer_token, { expires: 7 });

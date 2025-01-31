@@ -4,7 +4,7 @@ const generateFranchiseToken  = (res,_id)=>{
         process.env.FRANCHISE_JWT_TOKEN,
         {expiresIn : "3d"}
     )
-    res.cookie("franchise_token", token, {
+    res.cookie("franchise_token_", token, {
         httpOnly: true,
         sameSite: "None",
         secure : true,

@@ -4,7 +4,7 @@ const generateCustomerToken  = (res,_id)=>{
         process.env.CUSTOMER_JWT_TOKEN,
         {expiresIn : "3d"}
     )
-    res.cookie("customer_token", token, {
+    res.cookie("customer_token_", token, {
         httpOnly: true,
         sameSite: "None",
         secure : true,

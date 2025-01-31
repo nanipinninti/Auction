@@ -4,7 +4,7 @@ const generateAuctioneerToken  = (res,_id)=>{
         process.env.AUCTIONEER_JWT_TOKEN,
         {expiresIn : "3d"}
     )
-    res.cookie("auctioneer_token", token, {
+    res.cookie("auctioneer_token_", token, {
         httpOnly: true,
         sameSite: "None",
         secure : true,
