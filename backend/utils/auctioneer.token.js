@@ -5,7 +5,6 @@ const generateAuctioneerToken  = (res,_id)=>{
         {expiresIn : "3d"}
     )
     res.cookie("auctioneer_token_", token, {
-        httpOnly: true,
         sameSite: "None",
         secure : true,
         maxAge: 7 * 24 * 60 * 60 * 1000, 
