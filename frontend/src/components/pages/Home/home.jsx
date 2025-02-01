@@ -10,27 +10,7 @@ export default function Home(){
     useEffect(()=>{
         fetchLiveAuctions()
         fetchCompletedAuctions()
-        test()
     },[])
-
-    const test = async ()=>{
-        const api = `${DOMAIN}/auction-actions/test/`
-        const options = {
-            method : "GET",
-            credentials : "include"
-        }
-        try{
-            const response = await fetch(api,options)
-            if (response.ok){
-                const data = await response.json()
-                console.log("test passed")
-            }else{
-                alert("test failed")
-            }
-        }catch(error){
-            alert("test Failed to fetch")
-        }
-    }
 
     const fetchLiveAuctions = async ()=>{
         const api = `${DOMAIN}/auctions/live/`

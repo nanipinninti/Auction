@@ -19,22 +19,20 @@ export default function NavBar(){
 
 
             {/* Right side */}
-            <div className="flex items-center gap-[20px] cursor-pointer">
+            <div className="flex items-center gap-[15px] cursor-pointer">
                 <div className="text-black">
                     <NotificationsNoneIcon />
                 </div>
-                {
-                (!loginToken)?(
-                <button className="bg-[#615FFF] flex justify-center items-center rounded px-3 py-[3px] text-white"
-                        onClick={()=>{navigate("/login")}}>Login</button>) :
-                (
-                    <>
+                <div className="flex items-center">
+                    <button className="bg-[#615FFF] flex justify-center items-center rounded px-3 py-[3px] text-white"
+                            onClick={()=>{navigate("/login")}}>Login
+                    </button>
+                    {loginToken&&
                         <div className="text-black cursor-pointer">                        
                             <AccountMenu />
                         </div>
-                    </>
-                )
-                }
+                    }
+                </div>
             </div>
         </div>
     )
