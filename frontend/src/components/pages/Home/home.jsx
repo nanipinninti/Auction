@@ -14,7 +14,7 @@ export default function Home(){
     },[])
 
     const test = async ()=>{
-        const api = `${DOMAIN}/auction-actions/test`
+        const api = `${DOMAIN}/auction-actions/test/`
         const options = {
             method : "GET",
             credentials : "include"
@@ -33,7 +33,7 @@ export default function Home(){
     }
 
     const fetchLiveAuctions = async ()=>{
-        const api = `${DOMAIN}/auctions/live`
+        const api = `${DOMAIN}/auctions/live/`
         const options = {
             method : "GET"
         }
@@ -51,7 +51,7 @@ export default function Home(){
     }
 
     const fetchCompletedAuctions = async ()=>{
-        const api = `${DOMAIN}/auctions/completed`
+        const api = `${DOMAIN}/auctions/completed/`
         const options = {
             method : "GET"
         }
