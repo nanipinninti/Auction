@@ -24,46 +24,50 @@ export default function LoginForm(){
     const [password,setPassword] = useState("")
 
     const navigate = useNavigate()
-    const onSubmit = async (event) => {
-        event.preventDefault();
-      
-        const api = LoginAPIs[mode];
-        const details = {
-          franchise_name: username,
-          auctioneer_name: username,
-          customer_name: username,
-          password,
-        };
-      
-        const options = {
+
+    const onSubmit = async (event)=>{
+      event.preventDefault()
+
+      const api = LoginAPIs[mode]
+      const details = {
+          franchise_name : username,
+          auctioneer_name : username,
+          customer_name : username,
+          password
+      }
+      const options = {
           method: "POST",
-          credentials: "include", // Corrected typo
+          credentials : "include",
           headers: {
-            "Content-Type": "application/json",
+              "Content-Type": "application/json", // Setting Content-Type as JSON
           },
           body: JSON.stringify(details),
-        };
-      
-        try {
-          const response = await fetch(api, options);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.franchise_token) {
-              Cookies.set("franchise_id", data.franchise._id, {
-                expires: 7,
-                path: "/",
-                sameSite: "None",
-                secure: true,
-              });
-            }      
-            navigate("/");
-          } else {
-            alert("Incorrect credentials");
-          }
-        } catch (error) {
-          alert("Servor Error");
-        }
       };
+      
+      try{
+          const response = await fetch(api,options)
+          if (response.ok){
+              const data = await response.json()
+              if (data.auctioneer_token) {
+                  Cookies.set("auctioneer_token", data.auctioneer_token, { expires: 7 });
+              }
+              if (data.customer_token) {
+                  Cookies.set("customer_token", data.customer_token, { expires: 7 });
+              }
+              if (data.franchise_token) {
+                  Cookies.set("franchise_token", data.franchise_token, { expires: 7 });
+                  Cookies.set("franchise_id", data.franchise._id, { expires: 7 });
+              }
+              
+              navigate("/")
+          }else{
+              alert("Incorrect credentials")
+          }
+      }catch(error){
+          alert("Failed to Login")
+      }
+  }
+
       
     return(
         <div className="px-[15px] flex flex-col gap-[10px] pb-[20px] justify-center items-center">

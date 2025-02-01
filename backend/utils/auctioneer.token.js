@@ -8,7 +8,7 @@ const generateAuctioneerToken = (res, _id) => {
         sameSite: "None", // Required for cross-site cookies
         secure: true, 
         path: "/",
-        maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
+        maxAge: 3 * 24 * 60 * 60 * 1000 
     });
 
     return token;
