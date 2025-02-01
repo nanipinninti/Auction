@@ -33,6 +33,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"], 
     credentials: true, 
   },
+  path : "/socket.io/"
 });
 
 setupSocket(io);
