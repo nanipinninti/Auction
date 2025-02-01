@@ -6,7 +6,8 @@ const generateAuctioneerToken = (res, _id) => {
     res.cookie("auctioneer_token", token, {
         httpOnly: true,  // Prevents JavaScript from accessing the cookie
         sameSite: "None", // Required for cross-site cookies
-        secure: false, 
+        secure: true, 
+        path: "/",
         maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
     });
 
