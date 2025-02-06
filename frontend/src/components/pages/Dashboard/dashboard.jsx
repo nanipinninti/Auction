@@ -48,9 +48,9 @@ export default function Dashboard(){
         const api = currentOption.api
         const options = {
             method: "GET",
+            credentials : "include",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${Cookies.get("customer_token")}`
+                "Content-Type": "application/json"
             }
         }
         try{

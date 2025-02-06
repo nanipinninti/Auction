@@ -3,6 +3,7 @@ import LiveRoom from "@/components/features/LiveRoom/LiveRoom"
 import NavBar from "@/components/layout/NavBar/NavBar"
 import { useEffect } from "react"
 import Footer from "@/components/layout/Footer/footer";
+import PlayerStatus from "@/components/features/PlayersStatus/playersstatus";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -42,6 +43,9 @@ export default function AuctionRoom(){
             <div className="px-[25px] sm:px-[30px] mt-3 max-w-[1400px] mx-auto">
                 <h1 className="text-xl font-semibold my-5">Indian Premier League</h1>
                 <LiveRoom />
+            </div>
+            <div>
+                <PlayerStatus />
             </div>
             <Footer/>
         </div>

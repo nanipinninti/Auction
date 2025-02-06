@@ -22,8 +22,9 @@ export default function AddPlayers() {
         const fetchPlayers = async () => {
             try {
                 const response = await fetch(`${DOMAIN}/players/all?auction_id=${auction_id}`, {
-                    headers: {
-                        Authorization: `Bearer ${Cookies.get("customer_token")}`,
+                    credentials : "include",
+                    headers: {                        
+                    "Content-Type": "application/json"
                     },
                 });
                 const data = await response.json();
@@ -207,12 +208,11 @@ export default function AddPlayers() {
         };
 
         try {
-            const response = await fetch(`http://localhost:5001/players/add`, {
+            const response = await fetch(`${DOMAIN}/players/add`, {
                 method: 'POST',
                 credentials: "include", 
                 headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${Cookies.get("customer_token")}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
             });

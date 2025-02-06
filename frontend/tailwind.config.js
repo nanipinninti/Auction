@@ -56,5 +56,5 @@ export default {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate"),require('daisyui')],
+  plugins: [require("tailwindcss-animate"),require('daisyui'),require("tw-elements-react/dist/plugin.cjs")],
 }

@@ -86,8 +86,7 @@ export default function AddFranchises() {
                 method: "POST",
                 credentials: "include", 
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${Cookies.get("customer_token")}`, // Add bearer token
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     auction_id: auction_id, // Use auction_id from URL

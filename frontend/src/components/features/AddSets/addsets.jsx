@@ -131,8 +131,7 @@ export default function AddSets() {
                 method: 'POST',
                 credentials: "include", 
                 headers: { 
-                    'Content-Type': 'application/json' ,
-                    'Authorization': `Bearer ${Cookies.get("customer_token")}`
+                    'Content-Type': 'application/json'
 
                 },
                 body: JSON.stringify(requestBody)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import Cookies from "js-cookie";
+import { useParams } from "react-router-dom";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 // utils
@@ -10,7 +10,11 @@ import { alertTitleClasses } from "@mui/material";
 import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 
 import socket from "../../../socket/socket";
+import PlayerBoard from "../PlayerBoard/playerboard";
 import PlayerStatus from "../PlayersStatus/playersstatus";
+import LoadingComponent from "@/components/common/Loader/loader";
+import FailureComponent from "@/components/common/Failure/failure";
+import AuctionPause from "../AuctionPause/auctionpause";
 
 const modeNames = {
   customer: "customer",
@@ -23,28 +27,28 @@ const statusNames = {
   failure: "failure",
   ongoing: "ongoing",
   pause: "pause",
+  completed : "completed"
 };
 
 export default function LiveRoom() {
-  const [playerDetails, setPlayerDetails] = useState(null);
   const [auctionDetails, setAuctionDetails] = useState(null);
-  const [currentStatus, setCurrentStatus] = useState(statusNames.loading);
+  const [currentStatus, setCurrentStatus] = useState(statusNames.pause);
   const [playerId, setPlayerId] = useState("");
-  const [mode, setMode] = useState(ModeCheck());
-  const [setsInfo, setSetsInfo] = useState([]);
-  const [pickSet, setPickSet] = useState(1);
+  const [mode, setMode] = useState("customer");
 
   const { auction_id } = useParams();
 
-  // For sockets
+  // Intailly 
   useEffect(() => {
+    const CheckMode = async ()=>{
+      const flag = await ModeCheck(auction_id)
+      setMode(modeNames[flag])
+    }
+    
+    CheckMode();
     fetchAuctionDetails();
     socket.connect();
-
-    // Emit the "join_room" event with the auction ID
     socket.emit("join_room", { auction_id });
-
-    // Listen for confirmation of joining the room
     socket.on("joined_room", (message) => {
       console.log(message);
     });
@@ -56,31 +60,6 @@ export default function LiveRoom() {
       socket.disconnect();
     };
   }, [auction_id]);
-
-  useEffect(() => {
-    fetchSetsInfo();
-  }, []);
-
-  const fetchSetsInfo = async () => {
-    const api = `${DOMAIN}/auction-details/remaining-sets?auction_id=${auction_id}`;
-    const options = {
-      method: "GET",
-    };
-    try {
-      const response = await fetch(api, options);
-      if (response.ok) {
-        const data = await response.json();
-        setSetsInfo([...data.sets]);
-      }
-    } catch {
-      alert("Internal servor error");
-    }
-  };
-  useEffect(() => {
-    if (playerId) {
-      fetchPlayerDetails();
-    }
-  }, [playerId]);
 
   const fetchAuctionDetails = async () => {
     const api = `${DOMAIN}/auction-details/status?auction_id=${auction_id}`;
@@ -104,25 +83,6 @@ export default function LiveRoom() {
     }
   };
 
-  const fetchPlayerDetails = async () => {
-    const api = `${DOMAIN}/auction-details/player?player_id=${playerId}&auction_id=${auction_id}`;
-    const options = {
-      method: "GET",
-    };
-
-    try {
-      const response = await fetch(api, options);
-      if (response.ok) {
-        const data = await response.json();
-        setPlayerDetails(data.player_details);
-      } else {
-        alert("Failted to Fetch");
-      }
-    } catch (error) {
-      alert("Failted to fetch");
-    }
-  };
-
   // auction actions for auctioneer
   const SendPlayer = async () => {
     const api =  `${DOMAIN}/auction-actions/send-player`;
@@ -130,8 +90,7 @@ export default function LiveRoom() {
       method: "POST",
       credentials: "include", 
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         auction_id,
@@ -140,7 +99,12 @@ export default function LiveRoom() {
     try {
       const response = await fetch(api, options);
       if (response.ok) {
-        fetchAuctionDetails();
+        const data = await response.json()
+        if (data.success){
+          fetchAuctionDetails();
+        }else{
+          PickSet()
+        }        
         socket.emit("refresh");
       } else {
         alert("Failed to send the player");
@@ -150,32 +114,7 @@ export default function LiveRoom() {
     }
   };
 
-  const StartAuction = async () => {
-    const api = `${DOMAIN}/auction-actions/start-auction`;
-    const options = {
-      method: "POST",
-      credentials: "include", 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
-      },
-      body: JSON.stringify({
-        auction_id,
-      }),
-    };
-    try {
-      const response = await fetch(api, options);
-      if (response.ok) {
-        SendPlayer();
-        socket.emit("refresh");
-        fetchAuctionDetails();
-      } else {
-        alert("failed to start the auction , incorrect auction id");
-      }
-    } catch (error) {
-      alert("Failed to start the auction");
-    }
-  };
+
 
   const PauseAuction = async () => {
     const api = `${DOMAIN}/auction-actions/pause-auction`;
@@ -183,8 +122,7 @@ export default function LiveRoom() {
       method: "POST",
       credentials: "include", 
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         auction_id,
@@ -203,14 +141,14 @@ export default function LiveRoom() {
     }
   };
 
-  const SoldPlayer = async () => {
+  // Need to rectify this
+  const SoldPlayer = async (current_franchise,current_bid) => {
     const api = `${DOMAIN}/auction-actions/sold-player`;
     const options = {
       method: "POST",
       credentials: "include", 
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         auction_id,
@@ -266,14 +204,13 @@ export default function LiveRoom() {
     }
   };
   // auction actions for franchise
-  const RaiseBid = async () => {
+  const RaiseBid = async (current_bid) => {
     const api = `${DOMAIN}/auction-actions/raise-bid`;
     const options = {
       method: "POST",
       credentials: "include", 
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("franchise_token")}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         auction_id,
@@ -294,8 +231,7 @@ export default function LiveRoom() {
     }
   };
 
-  const PickSet = async () => {
-    const set_no = pickSet;
+  const PickSet = async (set_no = -1) => {
     const api =  `${DOMAIN}/auction-actions/pick-set`;
     const options = {
       method: "POST",
@@ -312,7 +248,16 @@ export default function LiveRoom() {
     try {
       const response = await fetch(api, options);
       if (response.ok) {
-        alert("Succesfully set the Set");
+        const data = await response.json()
+        if (data.success){
+          if (set_no===-1){
+            SendPlayer()
+          }
+          alert("Succesfully set the Set");
+        }
+        else if(data.code === "end-auction") {
+          return EndAuction()
+        }
       } else {
         alert("Failed to Pick the set, Try again");
       }
@@ -321,227 +266,79 @@ export default function LiveRoom() {
     }
   };
 
-  const { player_name, base_price, age, country, Type, image_url } =
-    playerDetails || {};
-  const {
-    matches_played,
-    runs,
-    avg,
-    strike_rate,
-    fifties,
-    wickets,
-    bowling_avg,
-    three_wicket_haul,
-    stumpings,
-  } = playerDetails ? playerDetails.stats : {};
+  const EndAuction = async () => {
+    const api =  `${DOMAIN}/auction-actions/end-auction`;
+    const options = {
+      method: "POST",
+      credentials: "include", 
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        auction_id
+      }),
+    };
+    try {
+      const response = await fetch(api, options);
+      if (response.ok) {
+        alert("Auction is successfully completed");   
+        setCurrentStatus(statusNames.completed);
+     
+        fetchAuctionDetails();      
+        socket.emit("refresh");
+      } else {
+        alert("Failed to end the Auction!");
+      }
+    } catch (error) {
+      alert("Internal Servor Error to end the auction");
+    }
+  };
 
-  const { current_bid, current_franchise } = auctionDetails || {};
 
-  if (currentStatus === statusNames.pause) {
-    return (
-      <>
-        {mode === modeNames.auctioneer ? (
-          <div className="flex flex-col items-center gap-4 min-h-screen">
-            {/* Profile and stats */}
-            <div className="px-4 rounded-xl text-sm py-3">
-              <h1>Pick the Set</h1>
-              <select
-                className="bg-transparent text-black border rounded w-[200px] p-2 mt-2"
-                id="current-set"
-                onChange={(e) => setPickSet(Number(e.target.value))} // Handle selection change
-              >
-                {setsInfo
-                  .filter((set) => set.status === "Available") // Filter available sets
-                  .map((set) => (
-                    <option key={set.set_no} value={set.set_no}>
-                      {set.set_name} {/* Display set name */}
-                    </option>
-                  ))}
-              </select>
-              <button
-                className="block bg-green-400 rounded text-white p-2 py-1 mt-2"
-                onClick={() => {
-                  PickSet();
-                }}
-              >
-                Save
-              </button>
-            </div>
-            <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
-              <button onClick={StartAuction}>Start the auction</button>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-3 min-h-screen">
-            <h1>Auction Yet to be Start! Please Wait !</h1>
-          </div>
-        )}
-      </>
-    );
+  const BeginAuction = ()=>{
+    SendPlayer();
+    socket.emit("refresh");
+    fetchAuctionDetails();
   }
-  const franchise_details = JSON.parse(
-    sessionStorage.getItem("franchise_details")
-  );
-  const franchise_name =
-    franchise_details && franchise_details[current_franchise]
-      ? franchise_details[current_franchise].franchise_name
-      : "#";
 
-  return (
-    <div className="flex flex-col items-center">
-      {/* Profile and stats */}
-      <div className="sm:shadow-md sm:rounded py-[30px] w-full max-w-[1400px] p-4">
-        <div className="flex flex-col sm:flex-row">
-          {/* Left */}
-          <div className="flex flex-col items-center w-full sm:w-1/2">
-            <div>
-              <img
-                src={image_url}
-                alt={player_name}
-                className="rounded object-cover w-[250px] h-[300px]"
-              />
-            </div>
-            <h1 className="text-xs uppercase mt-5">Name of the Player</h1>
-            <h1 className="text-2xl"> {player_name} </h1>
-            <h1 className="text-xs uppercase">
-              {country} {Type}
-            </h1>
-          </div>
-
-          <div className="flex flex-col gap-3 w-full sm:w-1/2 gap-[30px]">
-            <div className="w-[300px] flex flex-col gap-3">
-              <h1 className="text-xl">Batting Stats</h1>
-              <div className="flex justify-between">
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Innings</h1>
-                  <h1 className="text-xl">{matches_played}</h1>
-                </div>
-
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Runs</h1>
-                  <h1 className="text-xl">{runs}</h1>
-                </div>
-              </div>
-
-              <div className="flex justify-between">
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Average</h1>
-                  <h1 className="text-xl">{avg}</h1>
-                </div>
-
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Strike Rate</h1>
-                  <h1 className="text-xl">{strike_rate}</h1>
-                </div>
-              </div>
-
-              <div className="flex justify-between">
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Fifties</h1>
-                  <h1 className="text-xl">{fifties}</h1>
-                </div>
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Stumpings</h1>
-                  <h1 className="text-xl">{stumpings}</h1>
-                </div>
-              </div>
-            </div>
-
-            <div className="w-[300px] flex flex-col gap-3">
-              <h1 className="text-xl">Bowling Stats</h1>
-              <div className="flex justify-between">
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Wickets</h1>
-                  <h1 className="text-xl">{wickets}</h1>
-                </div>
-
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Average</h1>
-                  <h1 className="text-xl">{bowling_avg}</h1>
-                </div>
-              </div>
-
-              <div className="flex justify-between">
-                <div className="w-[100px]">
-                  <h1 className="text-xs uppercase">Three Wicket Haul</h1>
-                  <h1 className="text-xl">{three_wicket_haul}</h1>
-                </div>
-              </div>
-            </div>
-          </div>
+  const methods = {PauseAuction,SoldPlayer,UnSoldPlayer,RaiseBid}
+  return(
+    <div className="">
+      {
+        (currentStatus === statusNames.loading )&&
+        <div className="h-[300px]">
+          <LoadingComponent />
         </div>
-      </div>
+      }
 
-      {/* Options */}
-      <div className="flex flex-col sm:flex-row gap-2">
-        <div className="sticky sm:shadow-md flex items-center px-[20px] gap-5 sm:mt-5 py-[15px] rounded">
-          <div className="">
-            <h1 className="text-xs uppercase">Base Price</h1>
-            <h1 className="text-xl">{toIndianCurrency(base_price)}</h1>
-          </div>
-          <div className="">
-            <h1 className="text-xs uppercase">Current Bid</h1>
-            <h1 className="text-xl">{toIndianCurrency(current_bid)}</h1>
-          </div>
-          <div className="">
-            <h1 className="text-xs uppercase">Bid By</h1>
-            <h1 className="text-xl">{franchise_name}</h1>
-          </div>
+      {
+      (currentStatus === statusNames.failure )&&
+        <div className="">
+          <FailureComponent retryAction={fetchAuctionDetails}/>
         </div>
+      }
 
-        {/* For Franchises */}
-        {mode === modeNames.franchise && (
-          <div className="sticky sm:shadow-md flex items-center px-[20px] gap-5 sm:mt-5 py-[15px] rounded">
-            <div className="">
-              <h1 className="text-xs uppercase">Remaining Purse</h1>
-              <h1 className="text-xl">0</h1>
-            </div>
-            {/* Main */}
-            {Cookies.get("franchise_id") !== current_franchise ? (
-              <div className="bg-[#615FFF] text-white px-2 rounded-xl text-sm py-1 h-full">
-                <button onClick={RaiseBid}>
-                  Raise Bid
-                  <br />
-                  {toIndianCurrency(NextBid(current_bid))}
-                </button>
-              </div>
-            ) : (
-              <div className="bg-[#787A7A] text-white px-2 rounded-xl text-sm py-1 h-full cursor-not-allowed">
-                <button>
-                  Your Bid <br />
-                  {toIndianCurrency(current_bid)}
-                </button>
-              </div>
-            )}
-            <div className="">
-              <h1 className="text-xs uppercase">Min Rem Players</h1>
-              <h1 className="text-xl">5</h1>
-            </div>
-          </div>
-        )}
+    {
+      (currentStatus === statusNames.pause)&&
+        <div>
+          <AuctionPause mode={mode} PickSet={PickSet} BeginAuction={BeginAuction}/>
+        </div>
+    }
 
-        {/* For Auctioneer */}
-        {mode === modeNames.auctioneer && (
-          <div className="sticky sm:shadow-md flex items-center px-[20px] gap-5 sm:mt-5 py-[15px] rounded">
-            <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
-              <button onClick={PauseAuction}>Pause</button>
-            </div>
+    {
+      (currentStatus === statusNames.ongoing)&&
+        <div>
+          <PlayerBoard playerId={playerId} methods={methods} auctionDetails = {auctionDetails} mode={mode}/>
+        </div>
+    }
 
-            <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
-              <button onClick={SoldPlayer}>Sold</button>
-            </div>
+   {
+      (currentStatus === statusNames.completed)&&
+        <div>
+          Auction is sucessfully completed! 
+        </div>
+    }
 
-            <div className="bg-[#615FFF] text-white px-4 rounded-xl text-sm py-3">
-              <button onClick={UnSoldPlayer}>Unsold</button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Player Stats */}
-      <div>
-          <PlayerStatus />
-      </div>
     </div>
-  );
+  )
 }

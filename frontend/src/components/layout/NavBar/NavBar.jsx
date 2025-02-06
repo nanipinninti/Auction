@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import AccountMenu from "@/components/popup/Login/loginpopup";
 
 export default function NavBar(){
-    const loginToken = Cookies.get("customer_token") || Cookies.get("auctioneer_token") || Cookies.get("franchise_token")
+    const loginToken = Cookies.get("authenticated")
     const navigate = useNavigate()
     return(
         <div className="w-screen pr-[20px] sm:h-[60px] flex items-center sm:px-[25px] justify-between shadow-md">
