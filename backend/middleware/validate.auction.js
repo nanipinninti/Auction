@@ -17,12 +17,12 @@ const validateAuctionAuctioneer = async (req, res, next) => {
             });
         }
 
-        const isAuthorized = auction.auctioneers.some(
-            (obj) => obj.auctioneer_id.toString() === auctioneer_id.toString()
-        );
-
         // skip if it is in automatic mode
-        if (method && method==="auto"){
+        if (!method || method !=="auto"){            
+            const isAuthorized = auction.auctioneers.some(
+                (obj) => obj.auctioneer_id.toString() === auctioneer_id.toString()
+            );
+
             if (!isAuthorized) {
                 return res.status(403).json({
                     success: false,

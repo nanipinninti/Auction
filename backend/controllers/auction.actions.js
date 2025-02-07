@@ -49,7 +49,6 @@ const PauseAuction = async (req, res) => {
 
 const PickSet = async (req, res) => {
     const auction = req.auction;
-    const { auction_id } = req.query;
     let { set_no } = req.body;
 
     try {
@@ -129,6 +128,13 @@ const PickSet = async (req, res) => {
 
 const SendPlayer = async (req,res)=>{
     const auction = req.auction;
+    if (auction.status !== "ongoing"){
+        return res.status(201).json({
+            success: false,
+            message : "Auction is not ongoing. It might completed or paused or not yet started!",
+            code : "start-auction"
+        });
+    }
     try {
         const current_set_no = auction.auction_details.current_set
         const players = auction.players
@@ -170,6 +176,15 @@ const SendPlayer = async (req,res)=>{
 const RaiseBid = async (req,res)=>{
     const auction = req.auction;
     const {amount} = req.body
+
+    if (auction.status !== "ongoing"){
+        return res.status(201).json({
+            success: false,
+            message : "Auction is not ongoing. It might completed or paused or not yet started!",
+            code : "start-auction"
+        });
+    }
+
     try {
         if (amount <= auction.auction_details.current_bid){
             return res.status(500).json({
@@ -201,11 +216,11 @@ const RaiseBid = async (req,res)=>{
 }
 
 const SoldPlayer = async (req, res) => {
-    const { franchise_id, auction_id, sold_price, player_id } = req.body;
+    const {auction_id , method} = req.body;
     const auctioneer_id = req.auctioneer_id; 
 
     try {
-        if (!franchise_id || !auction_id || !sold_price || !player_id) {
+        if (!auction_id ) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -214,19 +229,27 @@ const SoldPlayer = async (req, res) => {
         if (!auction) {
             return res.status(404).json({ message: "Auction not found" });
         }
-
-        // Validate auctioneer
-        const isValidAuctioneer = auction.auctioneers.some(
-            (obj) => obj.auctioneer_id.toString() === auctioneer_id
-        );
-
-        if (!isValidAuctioneer) {
-            return res.status(403).json({
-                message: "Invalid Auctioneer, this is not your auction",
+        if (auction.status !== "ongoing"){
+            return res.status(201).json({
+                success: false,
+                message : "Auction is not ongoing. It might completed or paused or not yet started!",
+                code : "start-auction"
             });
         }
-
+        // Validate auctioneer
+        if (!method && method !== "auto"){
+            const isValidAuctioneer = auction.auctioneers.some(
+                (obj) => obj.auctioneer_id.toString() === auctioneer_id
+            );
+            if (!isValidAuctioneer) {
+                return res.status(403).json({
+                    message: "Invalid Auctioneer, this is not your auction",
+                });
+            }
+        }
         // Find player
+        const player_id = auction.auction_details.current_player
+
         const player = auction.players.find(
             (player) => player._id.toString() === player_id
         );
@@ -243,6 +266,18 @@ const SoldPlayer = async (req, res) => {
         }
         
         // Find franchise
+        const franchise_id = auction.auction_details.current_franchise
+
+        if (franchise_id === "#"){
+            player.status = "Unsold"; 
+            await auction.save();
+            return res.status(201).json({
+                message: `Player ${player.player_name} is UnSold`,
+                sold : false
+            });
+            
+
+        }
         const franchise = auction.franchises.find(
             (franchise) => franchise.franchise_id.toString() === franchise_id
         );
@@ -253,11 +288,13 @@ const SoldPlayer = async (req, res) => {
         }
 
         // Update player and franchise details
+        const sold_price = auction.auction_details.current_bid
         if (franchise.total_purse - franchise.spent < sold_price){            
             return res
                 .status(403)
                 .json({ message: "Insufficient Purse!" });
         }
+
         player.sold_price = sold_price;
         player.status = "Sold";
 
@@ -271,7 +308,9 @@ const SoldPlayer = async (req, res) => {
         await auction.save();
 
         res.status(201).json({
-            message: `Player ${player.player_name} successfully sold to ${franchise_id}`,
+            message: `Player ${player.player_name} successfully sold to `,
+            sold : true,
+            franchise_id
         });
 
     } catch (error) {
@@ -285,12 +324,30 @@ const SoldPlayer = async (req, res) => {
 };
 
 const UnSoldPlayer = async (req,res)=>{
-    const {player_id , auction_id} = req.body
-    if (!player_id) {
-        return res.status(400).json({ message: "Player id is missing!" });
-    }
+    const {auction_id,method} = req.body
+    const auctioneer_id = req.auctioneer_id; 
     try {
         const auction = await Auction.findOne({_id : auction_id})
+
+        if (auction.status !== "ongoing"){
+            return res.status(201).json({
+                success: false,
+                message : "Auction is not ongoing. It might completed or paused or not yet started!",
+                code : "start-auction"
+            });
+        }
+        // Validate auctioneer
+        if (!method && method !== "auto"){
+            const isValidAuctioneer = auction.auctioneers.some(
+                (obj) => obj.auctioneer_id.toString() === auctioneer_id
+            );
+            if (!isValidAuctioneer) {
+                return res.status(403).json({
+                    message: "Invalid Auctioneer, this is not your auction",
+                });
+            }
+        }
+        const player_id = auction.auction_details.current_player
         const player = auction.players.find(
             (player) => player._id.toString() === player_id
         );
@@ -318,6 +375,14 @@ const UnSoldPlayer = async (req,res)=>{
 
 const EndAuction = async (req, res) => {
     const auction = req.auction;
+
+    if (auction.status !== "ongoing"){
+        return res.status(201).json({
+            success: false,
+            message : "Auction is not ongoing. It might completed or paused or not yet started!",
+            code : "start-auction"
+        });
+    }
 
     try {
         // Modify and save the auction

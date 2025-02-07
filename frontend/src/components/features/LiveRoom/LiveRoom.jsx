@@ -11,10 +11,10 @@ import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 
 import socket from "../../../socket/socket";
 import PlayerBoard from "../PlayerBoard/playerboard";
-import PlayerStatus from "../PlayersStatus/playersstatus";
 import LoadingComponent from "@/components/common/Loader/loader";
 import FailureComponent from "@/components/common/Failure/failure";
 import AuctionPause from "../AuctionPause/auctionpause";
+import SuccessModal from "@/components/popup/Login/success";
 
 const modeNames = {
   customer: "customer",
@@ -35,10 +35,18 @@ export default function LiveRoom() {
   const [currentStatus, setCurrentStatus] = useState(statusNames.pause);
   const [playerId, setPlayerId] = useState("");
   const [mode, setMode] = useState("customer");
+  const [showPopUp,setShowPopUp] = useState(false)
+  const [popUpMessage,setPopUpMessage] = useState("")
+  const [endTime,setEndTime] = useState(Math.floor(Date.now() / 1000) + 30)
 
   const { auction_id } = useParams();
 
   // Intailly 
+
+  const franchise_details = JSON.parse(
+    sessionStorage.getItem("franchise_details")
+  );
+
   useEffect(() => {
     const CheckMode = async ()=>{
       const flag = await ModeCheck(auction_id)
@@ -49,17 +57,39 @@ export default function LiveRoom() {
     fetchAuctionDetails();
     socket.connect();
     socket.emit("join_room", { auction_id });
+
     socket.on("joined_room", (message) => {
       console.log(message);
     });
+
     socket.on("refresh", () => {
       fetchAuctionDetails();
     });
+
+    socket.on("player-sold-unsold", (data) => {
+      console.log(data)
+      if (!data.sold){        
+        setPopUpMessage(data.message)
+      }else{
+        const franchise_name = franchise_details && franchise_details[data.franchise_id]
+        ? franchise_details[data.franchise_id].franchise_name
+        : "#";
+        setPopUpMessage(data.message + franchise_name)
+      }
+      setShowPopUp(true)
+    });
+
+    socket.on("end_time",(end_time)=>{
+      setEndTime(end_time)
+    })
+
+
     return () => {
       socket.off("joined_room");
       socket.disconnect();
     };
   }, [auction_id]);
+
 
   const fetchAuctionDetails = async () => {
     const api = `${DOMAIN}/auction-details/status?auction_id=${auction_id}`;
@@ -132,6 +162,7 @@ export default function LiveRoom() {
       const response = await fetch(api, options);
       if (response.ok) {
         fetchAuctionDetails();
+        socket.emit("close-timer")
         socket.emit("refresh");
       } else {
         alert("failed to pause the auction , incorrect auction id");
@@ -221,6 +252,7 @@ export default function LiveRoom() {
       const response = await fetch(api, options);
       if (response.ok) {
         fetchAuctionDetails();
+        socket.emit("reset",auction_id)
         socket.emit("refresh");
       } else {
         alert("Failed to Raise the Bid, Try again");
@@ -297,6 +329,7 @@ export default function LiveRoom() {
 
   const BeginAuction = ()=>{
     SendPlayer();
+    socket.emit("start-timer",auction_id)
     socket.emit("refresh");
     fetchAuctionDetails();
   }
@@ -328,7 +361,12 @@ export default function LiveRoom() {
     {
       (currentStatus === statusNames.ongoing)&&
         <div>
-          <PlayerBoard playerId={playerId} methods={methods} auctionDetails = {auctionDetails} mode={mode}/>
+          <PlayerBoard playerId={playerId} methods={methods} auctionDetails = {auctionDetails} mode={mode} endTime={endTime}
+          
+         />
+
+          {/* Popups */}
+          <SuccessModal isOpen={showPopUp} onClose={()=>{setShowPopUp(false)}} msg={popUpMessage}/>
         </div>
     }
 

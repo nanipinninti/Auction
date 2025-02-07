@@ -1,5 +1,5 @@
 
-const SuccessModal = ({ isOpen, onClose }) => {
+const SuccessModal = ({ isOpen, onClose ,msg}) => {
   if (!isOpen) return null;
 
   return (
@@ -17,7 +17,7 @@ const SuccessModal = ({ isOpen, onClose }) => {
         <div className="flex flex-col items-center my-4">
           <div className="bg-green-500 rounded-full p-2">✅</div>
           <p className="text-gray-600 text-center mt-2">
-            Check your email for a booking confirmation. We’ll see you soon!
+            {msg}
           </p>
         </div>
         <button

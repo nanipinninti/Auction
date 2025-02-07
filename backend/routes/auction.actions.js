@@ -14,4 +14,6 @@ router.post("/end-auction", verifyAuctioneerToken,validateAuctionAuctioneer,EndA
 router.post("/send-player", verifyAuctioneerToken,validateAuctionAuctioneer,SendPlayer);
 router.post("/raise-bid", verifyFranchiseToken,validateAuctionFranchise,RaiseBid);
 
+
+
 module.exports = router;

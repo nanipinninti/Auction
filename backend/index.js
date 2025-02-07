@@ -66,6 +66,9 @@ app.use("/auctioneer", auctioneerAuthRouter);
 const auctionActions = require("./routes/auction.actions");
 app.use("/auction-actions", auctionActions);
 
+const autoAuctionActions = require("./routes/auto.auction.actions");
+app.use("/auto/auction-actions", autoAuctionActions);
+
 const auctionDetails = require("./routes/auction.details");
 app.use("/auction-details", auctionDetails);
 

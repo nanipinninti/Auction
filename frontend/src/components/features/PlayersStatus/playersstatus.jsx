@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import {useParams} from "react-router-dom"
+import { useParams } from 'react-router-dom';
+
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const PlayerStatus = () => {
@@ -8,122 +9,135 @@ const PlayerStatus = () => {
   const [unSoldPlayers, setUnSoldPlayers] = useState([]);
   const [upComingPlayers, setUpComingPlayers] = useState([]);
 
-  const {auction_id} = useParams()
+  const { auction_id } = useParams();
 
   useEffect(() => {
-    fetch( `${DOMAIN}/auction-details/sold-players?auction_id=${auction_id}`)
-      .then(response => response.json())
-      .then(data => setSoldPlayers(data.sold_players || []));
+    fetch(`${DOMAIN}/auction-details/sold-players?auction_id=${auction_id}`)
+      .then((response) => response.json())
+      .then((data) => setSoldPlayers(data.sold_players || []));
 
-    fetch( `${DOMAIN}/auction-details/un-sold-players?auction_id=${auction_id}`)
-      .then(response => response.json())
-      .then(data => setUnSoldPlayers(data.un_sold_players || [ ]));
+    fetch(`${DOMAIN}/auction-details/un-sold-players?auction_id=${auction_id}`)
+      .then((response) => response.json())
+      .then((data) => setUnSoldPlayers(data.un_sold_players || []));
 
-    fetch( `${DOMAIN}/auction-details/next-players?auction_id=${auction_id}`)
-      .then(response => response.json())
-      .then(data => setUpComingPlayers(data.availablePlayers || []));
-  }, []);
+    fetch(`${DOMAIN}/auction-details/next-players?auction_id=${auction_id}`)
+      .then((response) => response.json())
+      .then((data) => setUpComingPlayers(data.availablePlayers || []));
+  }, [auction_id]);
 
   return (
-    <div className="bg-white w-screen flex justify-center">
-      <div className="sm:w-[50%] w-screen shadow-2xl mt-10 pb-5 mb-5">
-        <div className="flex items-center dark:bg-gray-100 dark:text-gray-800 justify-center pt-5">
+    <div className="bg-gray-50 min-h-screen flex justify-center p-6">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Tabs */}
+        <div className="flex justify-center bg-gray-100 p-2">
           {['Sold Players', 'UnSold Players', 'UpComing Players'].map((category) => (
             <button
               key={category}
-              style={{
-                padding: "4px 20px",
-                border: "none",
-                borderBottom: tabId === category ? "3px solid #615FFF" : "3px solid gray",
-                backgroundColor: "transparent",
-                cursor: "pointer",
-                outline: "none",
-                borderRadius: 0,
-                color: tabId === category ? "#615FFF" : "black",
-                marginLeft: "3px",
-              }}
+              className={`px-6 py-2 text-sm font-medium ${
+                tabId === category
+                  ? 'text-white bg-purple-600'
+                  : 'text-gray-600 hover:bg-gray-200'
+              } rounded-md transition-all duration-300`}
               onClick={() => setTabId(category)}
             >
-              {category.replace(" Players", "")}
+              {category.replace(' Players', '')}
             </button>
           ))}
         </div>
-        {tabId === "Sold Players" && (
-          <div className="container p-2 mx-auto sm:p-4 dark:text-gray-800 w-full sm:w-[70%]">
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-xs">
-                <thead className="dark:bg-gray-300 text-[15px]">
-                  <tr className="text-left">
-                    <th className="p-3">Player Name</th>
-                    <th className="p-3">Franchise</th>
-                    <th className="p-3">Sold Price</th>
-                    <th className="p-3">Base Price</th>
-                  </tr>
-                </thead>
-                <tbody className="text-[14px]">
-                  {soldPlayers.map((player, index) => (
-                    <tr key={index} className="border-b border-opacity-20 dark:border-gray-300 dark:bg-gray-50">
-                      <td className="p-3">{player.player_name}</td>
-                      <td className="p-3">
-  {JSON.parse(sessionStorage.getItem("franchise_details") || "{}")[player.franchise_id]?.franchise_name}
-</td>
 
-                      <td className="p-3">{player.sold_price}</td>
-                      <td className="p-3">{player.base_price}</td>
+        {/* Table Container */}
+        <div className="p-4">
+          {tabId === 'Sold Players' && (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Player Name
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Franchise
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sold Price
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Base Price
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {soldPlayers.map((player, index) => (
+                    <tr key={index} className="hover:bg-gray-50 transition-all duration-200">
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.player_name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">
+                        {JSON.parse(sessionStorage.getItem('franchise_details') || '{}')[
+                          player.franchise_id
+                        ]?.franchise_name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.sold_price}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.base_price}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        )}
-        {tabId === "UnSold Players" && (
-          <div className="container p-2 mx-auto sm:p-4 dark:text-gray-800 w-[70%]">
+          )}
+
+          {tabId === 'UnSold Players' && (
             <div className="overflow-x-auto">
-              <table className="min-w-full text-xs">
-                <thead className="dark:bg-gray-300 text-[15px]">
-                  <tr className="text-left">
-                    <th className="p-3">Player Name</th>
-                    <th className="p-3">Base Price</th>
-                    
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Player Name
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Base Price
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="text-[14px]">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {unSoldPlayers.map((player, index) => (
-                    <tr key={index} className="border-b border-opacity-20 dark:border-gray-300 dark:bg-gray-50">
-                      <td className="p-3">{player.player_name}</td>
-                      <td className="p-3">{player.base_price}</td>
+                    <tr key={index} className="hover:bg-gray-50 transition-all duration-200">
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.player_name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.base_price}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        )}
-        {tabId === "UpComing Players" && (
-          <div className="container p-2 mx-auto sm:p-4 dark:text-gray-800 w-[70%]">
+          )}
+
+          {tabId === 'UpComing Players' && (
             <div className="overflow-x-auto">
-              <table className="min-w-full text-xs">
-                <thead className="dark:bg-gray-300 text-[15px]">
-                  <tr className="text-left">
-                    <th className="p-3">Player Name</th>
-                    <th className="p-3">Base Price</th>
-                    <th className="p-3">Set No</th>
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Player Name
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Base Price
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Set No
+                    </th>
                   </tr>
                 </thead>
-                <tbody className="text-[14px]">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {upComingPlayers.map((player, index) => (
-                    <tr key={index} className="border-b border-opacity-20 dark:border-gray-300 dark:bg-gray-50">
-                      <td className="p-3">{player.player_name}</td>
-                      <td className="p-3">{player.base_price}</td>
-                      <td className='p-3'>{player.set_no}</td>
+                    <tr key={index} className="hover:bg-gray-50 transition-all duration-200">
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.player_name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.base_price}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{player.set_no}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
