@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 import NextBid from "@/utils/NextBid";
 import Timer from "../Timer/timer";
+import { toast } from "react-toastify";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -47,7 +48,7 @@ export default function PlayerBoard(props) {
     setIsLoading(true);
     try {
       if (!playerId || playerId === "#") {
-        alert("Invalid player ID");
+        toast.error("Invalid player ID");
         return;
       }
 
@@ -62,11 +63,11 @@ export default function PlayerBoard(props) {
         const data = await response.json();
         setPlayerDetails(data.player_details || {});
       } else {
-        alert(`Failed to fetch player details. Status code: ${response.status}`);
+        toast.error(`Failed to fetch player details. Status code: ${response.status}`);
       }
     } catch (error) {
       console.error("Error fetching player details:", error);
-      alert("Failed to fetch player details. Please check your network connection.");
+      toast.error("Failed to fetch player details. Please check your network connection.");
     } finally {
       setIsLoading(false);
     }

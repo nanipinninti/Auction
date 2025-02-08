@@ -16,6 +16,8 @@ import FailureComponent from "@/components/common/Failure/failure";
 import AuctionPause from "../AuctionPause/auctionpause";
 import SuccessModal from "@/components/popup/Login/success";
 
+import { toast } from "react-toastify";
+
 const modeNames = {
   customer: "customer",
   auctioneer: "auctioneer",
@@ -59,15 +61,17 @@ export default function LiveRoom() {
     socket.emit("join_room", { auction_id });
 
     socket.on("joined_room", (message) => {
-      console.log(message);
+      toast.success(message);
     });
 
+    socket.on("auction-stopped",()=>{
+      toast.error("Auction is stopped..")
+    })
     socket.on("refresh", () => {
       fetchAuctionDetails();
     });
 
     socket.on("player-sold-unsold", (data) => {
-      console.log(data)
       if (!data.sold){        
         setPopUpMessage(data.message)
       }else{
@@ -106,10 +110,10 @@ export default function LiveRoom() {
         setPlayerId(data.auction_details.current_player);
         sessionStorage.setItem("bid_ratio", JSON.stringify(data.bid_ratio));
       } else {
-        alert("Failted to Fetch");
+        toast.error("Failted to Fetch");
       }
     } catch (error) {
-      alert("Failted to fetch");
+      toast.error("Failted to fetch");
     }
   };
 
@@ -136,11 +140,12 @@ export default function LiveRoom() {
           PickSet()
         }        
         socket.emit("refresh");
+        socket.emit("reset",auction_id)
       } else {
-        alert("Failed to send the player");
+        toast.error("Failed to send the player");
       }
     } catch (error) {
-      alert("Servor error");
+      toast.error("Servor error");
     }
   };
 
@@ -165,10 +170,10 @@ export default function LiveRoom() {
         socket.emit("close-timer")
         socket.emit("refresh");
       } else {
-        alert("failed to pause the auction , incorrect auction id");
+        toast.error("failed to pause the auction , incorrect auction id");
       }
     } catch (error) {
-      alert("Failed to pause the auction");
+      toast.error("Failed to pause the auction");
     }
   };
 
@@ -193,17 +198,16 @@ export default function LiveRoom() {
       if (response.ok) {
         fetchAuctionDetails();
         SendPlayer();
-        alert(
-          `Player  ${player_name} Sold to ${franchise_name} at ${toIndianCurrency(
-            current_bid
-          )}`
+        toast.success(
+          `Player sucesfully sold!!... `
         );
         socket.emit("refresh");
+        socket.emit("reset",auction_id)
       } else {
-        alert("Failed to sold the Player");
+        toast.error("Failed to sold the Player");
       }
     } catch (error) {
-      alert("Failed to sold the Player, Internal servor error");
+      toast.error("Failed to sold the Player, Internal servor error");
     }
   };
 
@@ -227,11 +231,12 @@ export default function LiveRoom() {
         fetchAuctionDetails();
         SendPlayer();
         socket.emit("refresh");
+        socket.emit("reset",auction_id)
       } else {
-        alert("Failed to Unsold the Players");
+        toast.error("Failed to Unsold the Players");
       }
     } catch (error) {
-      alert("Failed to Un Sold the Player, Internal servor error");
+      toast.error("Failed to Un Sold the Player, Internal servor error");
     }
   };
   // auction actions for franchise
@@ -255,11 +260,11 @@ export default function LiveRoom() {
         socket.emit("reset",auction_id)
         socket.emit("refresh");
       } else {
-        alert("Failed to Raise the Bid, Try again");
+        toast.error("Failed to Raise the Bid, Try again");
         fetchAuctionDetails();
       }
     } catch (error) {
-      alert("Servor Error");
+      toast.error("Servor Error");
     }
   };
 
@@ -285,16 +290,16 @@ export default function LiveRoom() {
           if (set_no===-1){
             SendPlayer()
           }
-          alert("Succesfully set the Set");
+          toast.error("Succesfully set the Set");
         }
         else if(data.code === "end-auction") {
           return EndAuction()
         }
       } else {
-        alert("Failed to Pick the set, Try again");
+        toast.error("Failed to Pick the set, Try again");
       }
     } catch (error) {
-      alert("Servor Error");
+      toast.error("Servor Error");
     }
   };
 
@@ -313,16 +318,16 @@ export default function LiveRoom() {
     try {
       const response = await fetch(api, options);
       if (response.ok) {
-        alert("Auction is successfully completed");   
+        toast.error("Auction is successfully completed");   
         setCurrentStatus(statusNames.completed);
      
         fetchAuctionDetails();      
         socket.emit("refresh");
       } else {
-        alert("Failed to end the Auction!");
+        toast.error("Failed to end the Auction!");
       }
     } catch (error) {
-      alert("Internal Servor Error to end the auction");
+      toast.error("Internal Servor Error to end the auction");
     }
   };
 

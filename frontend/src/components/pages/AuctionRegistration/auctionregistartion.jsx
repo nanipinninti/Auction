@@ -3,6 +3,7 @@ import Footer from "@/components/layout/Footer/footer";
 import Cookies from "js-cookie";
 import { useState } from "react";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+import { toast } from "react-toastify";
 
 import "./index.css";
 
@@ -36,13 +37,13 @@ export default function AuctionRegistration() {
       const response = await fetch(api, options);
       if (response.ok) {
         const data = await response.json();
-        alert("Successfully registered");
+        toast.success("Successfully registered");
         console.log(data);
       } else {
-        alert("Failed to register");
+        toast.error("Failed to register");
       }
     } catch (error) {
-      alert("Internal Server Error");
+      toast.error("Internal Server Error");
     }
   };
 

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
+import { toast } from "react-toastify";
+
 const modeNames = {
   customer: "customer",
   auctioneer: "auctioneer",
@@ -31,7 +33,7 @@ export default function AuctionPause(props) {
         setSetsInfo([...data.sets]);
       }
     } catch {
-      alert("Internal server error");
+      toast.error("Internal server error");
     }
   };
 
@@ -52,10 +54,10 @@ export default function AuctionPause(props) {
       if (response.ok) {
         BeginAuction();
       } else {
-        alert("Failed to start the auction, incorrect auction ID");
+        toast.error("Failed to start the auction, incorrect auction ID");
       }
     } catch (error) {
-      alert("Failed to start the auction");
+      toast.error("Failed to start the auction");
     }
   };
 

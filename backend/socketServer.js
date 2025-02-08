@@ -3,7 +3,7 @@ const { SendPlayer, SoldPlayer, PickSet, EndAuction } = require("./socket/socket
 
 // Map to store active auctions and their timers
 const activeAuctions = new Map();
-
+const LAG = 5 * 1000
 // Setup Socket.IO
 const setupSocket = (io) => {
   io.on("connection", (socket) => {
@@ -38,17 +38,20 @@ const setupSocket = (io) => {
       io.to(auction_id).emit("end_time", end_time);
     });
 
-    // Handle resetting the auction timer
+    // Socket event handler for reset
     socket.on("reset", (auction_id) => {
-      if (auction_id) {
-        const end_time = resetAuctionTimer(io, auction_id);
-        if (end_time) {
-          io.to(auction_id).emit("end_time", end_time);
-        } else {
-          socket.emit("error", "Failed to reset the auction timer.");
-        }
+    console.log("Resetting auction:", auction_id);
+    if (auction_id) {
+      const end_time = resetAuctionTimer(io, auction_id);
+      if (end_time) {
+        io.to(auction_id).emit("end_time", end_time);
+        io.to(auction_id).emit("refresh");
+      } else {
+        socket.emit("error", "Failed to reset the auction timer.");
       }
+    }
     });
+
 
     // Handle refreshing the auction room
     socket.on("refresh", () => {
@@ -70,9 +73,9 @@ const setupSocket = (io) => {
   });
 };
 
-// Function to start the auction process
 const startAuctionProcess = (io, auction_id, duration = 30) => {
   const end_time = Math.floor(Date.now() / 1000) + duration;
+  console.log(`Starting auction process for Auction ID: ${auction_id}, End Time: ${end_time}`);
 
   // Clear existing interval if the auction is already active
   if (activeAuctions.has(auction_id)) {
@@ -94,6 +97,7 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
         if (response.success) {
           // Successfully generated a new player
           io.to(auction_id).emit("refresh");
+          await new Promise(resolve => setTimeout(resolve, LAG)); 
           const endTime = Math.floor(Date.now() / 1000) + duration;
           io.to(auction_id).emit("end_time", endTime);
 
@@ -110,6 +114,8 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
 
             if (send_new_player.success) {
               io.to(auction_id).emit("refresh");
+
+              await new Promise(resolve => setTimeout(resolve, LAG)); 
               const endTime = Math.floor(Date.now() / 1000) + duration;
               io.to(auction_id).emit("end_time", endTime);
 
@@ -128,7 +134,8 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
             if (end_auction.success) {
               stopAuction(auction_id);
               io.to(auction_id).emit("auction-completed");
-              io.to(auction_id).emit("refresh");
+              io.to(auction_id).emit("refresh");              
+              await new Promise(resolve => setTimeout(resolve, LAG)); 
             } else {
               console.log("Error while ending the auction!!", end_auction);
               stopAuction(auction_id);
@@ -153,21 +160,30 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
 
   // Store the interval and end time in activeAuctions
   activeAuctions.set(auction_id, { interval: auctionInterval, end_time });
+  console.log(`Auction ID ${auction_id} added to activeAuctions with End Time: ${end_time}`);
   return end_time;
 };
 
-// Function to reset the auction timer
 const resetAuctionTimer = (io, auction_id) => {
+  console.log("Resetting timer...");
   if (activeAuctions.has(auction_id)) {
     console.log(`Resetting timer for Auction ID: ${auction_id}`);
     clearInterval(activeAuctions.get(auction_id).interval); // Clear the existing interval
     activeAuctions.delete(auction_id); // Remove the auction from activeAuctions
-    return startAuctionProcess(io, auction_id, 30); // Start a new timer
+
+    // Start a new timer and get the end_time
+    const end_time = startAuctionProcess(io, auction_id, 30);
+    console.log(`New End Time for Auction ID ${auction_id}: ${end_time}`);
+
+    // Emit the new end_time to the room immediately
+    io.to(auction_id).emit("end_time", end_time);
+    return end_time;
   } else {
     console.log(`Auction ID ${auction_id} not found in active auctions.`);
     return null;
   }
 };
+
 
 // Function to stop the auction
 const stopAuction = (auction_id) => {

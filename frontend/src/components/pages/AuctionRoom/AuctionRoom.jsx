@@ -4,6 +4,7 @@ import NavBar from "@/components/layout/NavBar/NavBar"
 import { useEffect } from "react"
 import Footer from "@/components/layout/Footer/footer";
 import PlayerStatus from "@/components/features/PlayersStatus/playersstatus";
+import { toast } from "react-toastify";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -30,10 +31,10 @@ export default function AuctionRoom(){
                 const data = await response.json()
                 sessionStorage.setItem("franchise_details",JSON.stringify(data))
             }else{
-                alert("Failed to Fetch to Franchise Details")
+                toast.error("Failed to Fetch to Franchise Details")
             }
         }catch(error){
-            alert("Servor Error")
+            toast.error("Servor Error")
         }
     }
     

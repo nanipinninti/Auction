@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+import { toast } from "react-toastify";
 
 import NavBar from "@/components/layout/NavBar/NavBar";
 import Footer from "@/components/layout/Footer/footer";
@@ -59,10 +60,10 @@ export default function Dashboard() {
         const data = await response.json();
         setAuctions(data.auctions);
       } else {
-        alert("Failed to fetch");
+        toast.error("Failed to fetch");
       }
     } catch {
-      alert("Internal Server Error");
+      toast.error("Internal Server Error");
     }
   };
 

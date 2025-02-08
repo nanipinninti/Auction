@@ -6,9 +6,14 @@ import AuctionRegistration from './components/pages/AuctionRegistration/auctionr
 import Dashboard from './components/pages/Dashboard/dashboard';
 import AuctionConfigurations from './components/pages/AuctionConfigurations/AuctionConfigurations';
 
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function App() {
   return (      
       <BrowserRouter>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auction-room/:auction_id" element={<AuctionRoom />} />
