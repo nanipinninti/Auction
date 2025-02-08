@@ -21,12 +21,12 @@ export default function AuctionCard(props) {
       </div>
 
       {/* Content Section */}
-      <div className="p-4">
+      <div className="p-4 ">
         {/* Short Name */}
-        <h1 className="text-sm text-gray-500 uppercase font-medium mb-1">{short_name}</h1>
+        <h1 className="text-sm text-gray-500 uppercase font-medium mb-[1px]">{short_name}</h1>
 
         {/* Auction Name */}
-        <h1 className="text-xl font-bold text-gray-800 mb-2">{auction_name}</h1>
+        <h1 className="text-[17px] font-bold text-gray-800 mb-[5px]">{auction_name}</h1>
 
         {/* Description */}
         <p className="text-sm text-gray-600 line-clamp-2">{description}</p>

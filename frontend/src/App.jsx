@@ -13,7 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function App() {
   return (      
       <BrowserRouter>
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+        <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auction-room/:auction_id" element={<AuctionRoom />} />

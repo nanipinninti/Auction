@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
+import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const PlayerStatus = () => {
@@ -26,7 +26,7 @@ const PlayerStatus = () => {
   }, [auction_id]);
 
   return (
-    <div className="bg-gray-50 min-h-screen flex justify-center p-6">
+    <div className="bg-gray-50 min-h-[300px] flex justify-center p-6">
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden">
         {/* Tabs */}
         <div className="flex justify-center bg-gray-100 p-2">
@@ -75,8 +75,8 @@ const PlayerStatus = () => {
                           player.franchise_id
                         ]?.franchise_name}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{player.sold_price}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{player.base_price}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{toIndianCurrency(player.sold_price)}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{toIndianCurrency(player.base_price)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -101,7 +101,7 @@ const PlayerStatus = () => {
                   {unSoldPlayers.map((player, index) => (
                     <tr key={index} className="hover:bg-gray-50 transition-all duration-200">
                       <td className="px-4 py-3 text-sm text-gray-900">{player.player_name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{player.base_price}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{toIndianCurrency(player.base_price)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -129,7 +129,7 @@ const PlayerStatus = () => {
                   {upComingPlayers.map((player, index) => (
                     <tr key={index} className="hover:bg-gray-50 transition-all duration-200">
                       <td className="px-4 py-3 text-sm text-gray-900">{player.player_name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-900">{player.base_price}</td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{toIndianCurrency(player.base_price)}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{player.set_no}</td>
                     </tr>
                   ))}

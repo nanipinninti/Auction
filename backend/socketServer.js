@@ -3,7 +3,6 @@ const { SendPlayer, SoldPlayer, PickSet, EndAuction } = require("./socket/socket
 
 // Map to store active auctions and their timers
 const activeAuctions = new Map();
-const LAG = 5 * 1000
 // Setup Socket.IO
 const setupSocket = (io) => {
   io.on("connection", (socket) => {
@@ -97,7 +96,6 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
         if (response.success) {
           // Successfully generated a new player
           io.to(auction_id).emit("refresh");
-          await new Promise(resolve => setTimeout(resolve, LAG)); 
           const endTime = Math.floor(Date.now() / 1000) + duration;
           io.to(auction_id).emit("end_time", endTime);
 
@@ -114,8 +112,6 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
 
             if (send_new_player.success) {
               io.to(auction_id).emit("refresh");
-
-              await new Promise(resolve => setTimeout(resolve, LAG)); 
               const endTime = Math.floor(Date.now() / 1000) + duration;
               io.to(auction_id).emit("end_time", endTime);
 
@@ -135,7 +131,6 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
               stopAuction(auction_id);
               io.to(auction_id).emit("auction-completed");
               io.to(auction_id).emit("refresh");              
-              await new Promise(resolve => setTimeout(resolve, LAG)); 
             } else {
               console.log("Error while ending the auction!!", end_auction);
               stopAuction(auction_id);

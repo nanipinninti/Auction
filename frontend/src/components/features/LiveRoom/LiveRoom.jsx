@@ -6,7 +6,6 @@ const DOMAIN = import.meta.env.VITE_DOMAIN;
 // utils
 import ModeCheck from "@/utils/modecheck";
 import NextBid from "@/utils/NextBid";
-import { alertTitleClasses } from "@mui/material";
 import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 
 import socket from "../../../socket/socket";
@@ -14,7 +13,7 @@ import PlayerBoard from "../PlayerBoard/playerboard";
 import LoadingComponent from "@/components/common/Loader/loader";
 import FailureComponent from "@/components/common/Failure/failure";
 import AuctionPause from "../AuctionPause/auctionpause";
-import SuccessModal from "@/components/popup/Login/success";
+import SuccessModal from "@/components/popup/Notification/success";
 
 import { toast } from "react-toastify";
 
@@ -28,12 +27,14 @@ const statusNames = {
   loading: "loading",
   failure: "failure",
   ongoing: "ongoing",
+  upcoming: "upcoming",
   pause: "pause",
   completed : "completed"
 };
 
 export default function LiveRoom() {
   const [auctionDetails, setAuctionDetails] = useState(null);
+  const [auctionName,setAuctionName] = useState("")
   const [currentStatus, setCurrentStatus] = useState(statusNames.pause);
   const [playerId, setPlayerId] = useState("");
   const [mode, setMode] = useState("customer");
@@ -61,7 +62,7 @@ export default function LiveRoom() {
     socket.emit("join_room", { auction_id });
 
     socket.on("joined_room", (message) => {
-      toast.success(message);
+      console.log(message);
     });
 
     socket.on("auction-stopped",()=>{
@@ -106,6 +107,7 @@ export default function LiveRoom() {
       if (response.ok) {
         const data = await response.json();
         setCurrentStatus(data.current_status);
+        setAuctionName(data.auction_name)
         setAuctionDetails(data.auction_details);
         setPlayerId(data.auction_details.current_player);
         sessionStorage.setItem("bid_ratio", JSON.stringify(data.bid_ratio));
@@ -148,7 +150,6 @@ export default function LiveRoom() {
       toast.error("Servor error");
     }
   };
-
 
 
   const PauseAuction = async () => {
@@ -217,8 +218,7 @@ export default function LiveRoom() {
       method: "POST",
       credentials: "include", 
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         auction_id,
@@ -275,7 +275,6 @@ export default function LiveRoom() {
       credentials: "include", 
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("auctioneer_token")}`,
       },
       body: JSON.stringify({
         auction_id,
@@ -334,14 +333,17 @@ export default function LiveRoom() {
 
   const BeginAuction = ()=>{
     SendPlayer();
+    // Important
     socket.emit("start-timer",auction_id)
+
     socket.emit("refresh");
     fetchAuctionDetails();
   }
 
   const methods = {PauseAuction,SoldPlayer,UnSoldPlayer,RaiseBid}
   return(
-    <div className="">
+    <div className="bg-gray-50 text-[#323232]">      
+      <h1 className="text-[19px] sm:text-[20px] font-semibold  my-5 capitalize">{auctionName}</h1>
       {
         (currentStatus === statusNames.loading )&&
         <div className="h-[300px]">
@@ -357,7 +359,7 @@ export default function LiveRoom() {
       }
 
     {
-      (currentStatus === statusNames.pause)&&
+      (currentStatus === statusNames.pause || currentStatus === statusNames.upcoming)&&
         <div>
           <AuctionPause mode={mode} PickSet={PickSet} BeginAuction={BeginAuction}/>
         </div>
@@ -377,9 +379,12 @@ export default function LiveRoom() {
 
    {
       (currentStatus === statusNames.completed)&&
-        <div>
-          Auction is sucessfully completed! 
+      <div className="bg-gray-50  flex items-center justify-center p-6">
+        <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+          <h1 className="text-xl font-bold text-gray-800 mb-4">Auction Completed</h1>
+          <p className="text-gray-600">The auction is completed. Check below the details of the players.</p>
         </div>
+      </div>
     }
 
     </div>

@@ -6,7 +6,7 @@ import toIndianCurrency from "@/utils/indianCurrencyConvertor";
 import NextBid from "@/utils/NextBid";
 import Timer from "../Timer/timer";
 import { toast } from "react-toastify";
-
+import LoadingComponent from "@/components/common/Loader/loader";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 const modeNames = {
@@ -89,20 +89,13 @@ export default function PlayerBoard(props) {
       : "#";
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
-      {/* Timer Section */}
-      <div className="mb-8">
-        <Timer endTime={endTime} />
-      </div>
-
+    <div className="bg-gray-50 min-h-screen sm:p-6">
       {/* Profile & Stats Section */}
       <div className="container mx-auto">
         {isLoading ? (
-          <div className="flex items-center justify-center min-h-[300px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-          </div>
+          <LoadingComponent />
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="sm:bg-white rounded-lg sm:shadow-md sm:p-6">
             <div className="flex flex-col sm:flex-row gap-8">
               {/* Left Section - Player Image and Basic Info */}
               <div className="w-full sm:w-1/3 flex flex-col items-center">
@@ -110,7 +103,7 @@ export default function PlayerBoard(props) {
                   <img
                     src={image_url}
                     alt={player_name}
-                    className="rounded-lg object-cover w-[250px] h-[300px] mb-6 shadow-lg"
+                    className="rounded-lg object-cover w-[250px] h-[330px] mb-6 shadow-lg"
                   />
                 ) : (
                   <div className="w-[250px] h-[300px] bg-gray-100 rounded-lg flex items-center justify-center">
@@ -122,7 +115,7 @@ export default function PlayerBoard(props) {
                   {country} | {Type}
                 </div>
                 <div className="mt-2 text-gray-700">
-                  <span className="text-sm">Base Price: ${base_price.toLocaleString()}</span>
+                  <span className="text-sm">Base Price: {toIndianCurrency(base_price)}</span>
                 </div>
                 <div className="mt-1 text-gray-700">
                   <span className="text-sm">Age: {age}</span>
@@ -134,7 +127,7 @@ export default function PlayerBoard(props) {
                 <div className="flex flex-col gap-6">
                   {/* Batting Stats */}
                   <div className="bg-gray-50 p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-800">Batting Stats</h2>
+                    <h2 className="text-[18px]  mb-4">Batting Stats</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <StatCard label="Innings" value={matches_played} />
                       <StatCard label="Runs" value={runs} />
@@ -147,7 +140,7 @@ export default function PlayerBoard(props) {
 
                   {/* Bowling Stats */}
                   <div className="bg-gray-50 p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4 text-gray-800">Bowling Stats</h2>
+                    <h2 className="text-[18px]  mb-4">Bowling Stats</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <StatCard label="Wickets" value={wickets} />
                       <StatCard label="Bowling Average" value={bowling_avg} />
@@ -162,9 +155,9 @@ export default function PlayerBoard(props) {
       </div>
 
       {/* Bid Section */}
-      <div className="sticky bottom-0 bg-white shadow-lg mt-8 py-4">
+      <div className="sticky bottom-0 bg-white rounded-md shadow-lg mt-8 py-4">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-around items-center">
             {/* Base Price, Current Bid, Bid By */}
             <div className="flex gap-6">
               <StatCard label="Base Price" value={toIndianCurrency(base_price)} />
@@ -172,16 +165,21 @@ export default function PlayerBoard(props) {
               <StatCard label="Bid By" value={franchise_name} />
             </div>
 
+            {/* Timer Section */}
+            <div>
+                  <Timer endTime={endTime} />
+            </div>
+
             {/* Franchise Actions */}
             {mode === modeNames.franchise && (
               <div className="flex gap-4 items-center">
-                <StatCard label="Remaining Purse" value="0" />
+                <StatCard label="Purse Left" value="0" />
                 {Cookies.get("franchise_id") !== current_franchise ? (
                   <button
                     onClick={() => RaiseBid(current_bid)}
                     className="bg-[#615FFF] text-white px-6 py-2 rounded-lg hover:bg-[#4a4ac7] transition-all"
                   >
-                    Raise Bid <br />
+                    <h1 className="text-[10px] uppercase">Raise Bid</h1>
                     {toIndianCurrency(NextBid(current_bid))}
                   </button>
                 ) : (
@@ -193,7 +191,6 @@ export default function PlayerBoard(props) {
                     {toIndianCurrency(current_bid)}
                   </button>
                 )}
-                <StatCard label="Min Rem Players" value="5" />
               </div>
             )}
 
@@ -230,7 +227,7 @@ export default function PlayerBoard(props) {
 // Reusable StatCard Component
 const StatCard = ({ label, value }) => (
   <div className="text-center">
-    <p className="text-sm uppercase text-gray-600">{label}</p>
-    <p className="text-xl font-bold text-gray-800">{value}</p>
+    <p className="text-[12px] uppercase text-gray-600">{label}</p>
+    <p className="text-[15px] font-bold text-gray-800">{value}</p>
   </div>
 );

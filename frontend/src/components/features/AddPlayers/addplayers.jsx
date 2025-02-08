@@ -297,9 +297,9 @@ export default function AddPlayers() {
 
                     <button
                             onClick={addPlayers}
-                            className="p-1 px-2 w-[150px] bg-[#60A5FA] text-white rounded"
+                            className="p-1 w-fit px-4 bg-[#60A5FA] text-white rounded"
                         >
-                            Add Players
+                            Save
                     </button>
 
                     {/* Delete Modal */}

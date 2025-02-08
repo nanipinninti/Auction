@@ -203,6 +203,7 @@ const CurrentStatus = async (req, res) => {
     }
     return res.status(201).json({
       success: true,
+      auction_name : auction.auction_name,
       current_status: auction.status,
       auction_details: auction.auction_details,
       bid_ratio: auction.bid_ratio,

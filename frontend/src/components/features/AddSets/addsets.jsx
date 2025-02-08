@@ -216,9 +216,9 @@ export default function AddSets() {
 
                     <button
                             onClick={addSets}
-                            className="p-1 px-2 w-[150px] bg-[#60A5FA] text-white rounded"
+                            className="p-1 w-fit px-4 bg-[#60A5FA] text-white rounded-md"
                         >
-                            Add Sets
+                            Save
                     </button>
 
                     {/* Delete Modal */}

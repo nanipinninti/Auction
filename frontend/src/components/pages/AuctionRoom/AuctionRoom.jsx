@@ -39,10 +39,9 @@ export default function AuctionRoom(){
     }
     
     return(
-        <div className="min-h-screen min-w-screen">
+        <div className="bg-gray-50 min-h-screen min-w-screen text-[#323232]">
             <NavBar />
             <div className="px-[25px] sm:px-[30px] mt-3 max-w-[1400px] mx-auto">
-                <h1 className="text-xl font-semibold my-5">Indian Premier League</h1>
                 <LiveRoom />
             </div>
             <div>
