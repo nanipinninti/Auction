@@ -3,6 +3,7 @@ import coverImage from "../../../assets/images/cover.png";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -18,7 +19,7 @@ const LoginAPIs = {
     Franchise: `${DOMAIN}/franchise/login`
 };
 
-export default function LoginForm() {
+export default function LoginForm({onSuccess,onSignupClick}) {
     const [mode, setMode] = useState(modeNames.auctioneer);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -62,11 +63,15 @@ export default function LoginForm() {
             setLoading(false);
             
             if (response.ok) {
+                toast.success("Login Success")
                 if (data.franchise) {
                     Cookies.set("franchise_id", data.franchise._id, { expires: 7 });
                 }
-                Cookies.set("authenticated",true,{expires : 7})
-                navigate("/");
+                if(data.customer){
+                    Cookies.set("authenticated",true,{expires : 7})
+                    localStorage.setItem("user_name",data.customer.customer_name)
+                }
+                onSuccess()
             } else {
                 setError(data.message || "Incorrect credentials");
             }
@@ -131,6 +136,9 @@ export default function LoginForm() {
                     {loading ? "Logging in..." : "LOGIN"}
                 </button>
             </div>
+            <h1 className="text-[13px] cursor-pointer">Not having Account?
+                 <span className="text-blue-700" onClick={()=>{onSignupClick()}}> Signup</span>
+            </h1>
         </div>
     );
 }

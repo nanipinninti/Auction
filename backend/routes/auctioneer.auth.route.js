@@ -3,7 +3,7 @@ const { login,signup ,logout,auctioneersList} = require("../controllers/auctione
 const router = express.Router();
 
 router.post("/login", login);
-router.post("/logout", logout);
+router.get("/logout", logout);
 router.post("/signup", signup);
 router.get("/list", auctioneersList);
 module.exports = router;

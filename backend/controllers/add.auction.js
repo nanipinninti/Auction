@@ -204,4 +204,34 @@ const addAuctioneers = async (req, res) => {
 };
 
 
-module.exports = {addAuction,addSets,addAuctioneers ,addFranchises}
+const modifyAuction = async (req, res) => {
+  const { id } = req.params;
+  const { auction_name, short_name, description, auction_date, auction_time } = req.body;
+  const auction_img = req.auction_img_url
+ 
+  try {
+    const updatedAuction = await Auction.findByIdAndUpdate(
+      id,
+      {
+        auction_name,
+        short_name,
+        description,
+        auction_img,
+        auction_date,
+        auction_time,
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedAuction) {
+      return res.status(404).json({ success: false, message: "Auction not found" });
+    }
+
+    res.status(200).json({ success: true, data: updatedAuction });
+  } catch (error) {
+    console.error("Error updating auction details:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+module.exports = {addAuction,addSets,addAuctioneers ,addFranchises,modifyAuction}

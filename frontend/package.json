@@ -18,6 +18,7 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "auction": "file:..",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "js-cookie": "^3.0.5",
@@ -30,6 +31,7 @@
     "react-icons": "^5.4.0",
     "react-toastify": "^11.0.3",
     "socket.io-client": "^4.8.1",
+    "sweetalert2": "^11.16.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tw-elements-react": "^1.0.0-alpha-end"

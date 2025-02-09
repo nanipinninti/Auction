@@ -3,7 +3,7 @@ const { login,signup ,logout,franchisesList} = require("../controllers/franchise
 const router = express.Router();
 
 router.post("/login", login);
-router.post("/logout", logout);
+router.get("/logout", logout);
 router.post("/signup", signup);
 router.get("/list", franchisesList);
 

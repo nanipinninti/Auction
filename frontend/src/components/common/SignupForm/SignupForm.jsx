@@ -2,6 +2,8 @@ import { useState } from "react";
 import coverImage from "../../../assets/images/cover.png";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -11,9 +13,16 @@ const modeNames = {
   franchise: "franchise",
 };
 
-export default function SignupForm() {
+const SignupAPIs = {
+  customer: `${DOMAIN}/customer/signup`,
+  auctioneer: `${DOMAIN}/auctioneer/signup`,
+  franchise: `${DOMAIN}/franchise/signup`
+};
+
+export default function SignupForm({onSuccess,onSigninClick}) {
   const [mode, setMode] = useState(modeNames.customer);
   const [username, setUsername] = useState("");
+  const [ownername, setOwnername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -39,33 +48,40 @@ export default function SignupForm() {
 
     setLoading(true);
 
-    // API handling logic goes here
-    // Example:
-    // const api = `${DOMAIN}/signup/${mode}`;
-    // const details = { username, password };
-    // try {
-    //   const response = await fetch(api, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(details),
-    //   });
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     navigate("/login"); // Redirect to login after successful signup
-    //   } else {
-    //     setError(data.message || "Signup failed");
-    //   }
-    // } catch (error) {
-    //   setError("Server busy. Try again later.");
-    // } finally {
-    //   setLoading(false);
-    // }
-
-    // For now, simulate a successful signup
-    setTimeout(() => {
+    const api = SignupAPIs[mode];
+    const details = { 
+        franchise_name: username,
+        auctioneer_name: username,
+        customer_name: username,
+        owner_name : ownername,
+        password
+    };
+    try {
+      const response = await fetch(api, {
+        method: "POST",
+        credentials : "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(details),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success("Signup successfull")
+        if (data.franchise) {
+            Cookies.set("franchise_id", data.franchise._id, { expires: 7 });
+        }
+        if(data.customer){
+            Cookies.set("authenticated",true,{expires : 7})
+            localStorage.setItem("user_name",data.customer.customer_name)
+        }
+        onSuccess()
+      } else {
+        setError(data.message || "Signup failed");
+      }
+    } catch (error) {
+      setError("Server busy. Try again later.");
+    } finally {
       setLoading(false);
-      navigate("/login"); // Redirect to login after signup
-    }, 1000);
+    }
   };
 
   return (
@@ -98,16 +114,29 @@ export default function SignupForm() {
         </motion.div>
       )}
 
+        <div className="flex flex-col gap-2 w-full">
+          <p className="text-sm"> {(mode===modeNames.franchise)?`Franchise name`:`Username`}</p>
+          <input
+            type="text"
+            className="bg-white w-full text-gray-600 border border-gray-300 focus:border-black focus:ring-1 focus:ring-black rounded p-2"
+            value={username}
+            placeholder={(mode===modeNames.franchise)?`Franchise name`:`Username`}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+
+      {(mode===modeNames.franchise)&&
       <div className="flex flex-col gap-2 w-full">
-        <p className="text-sm">Username</p>
+        <p className="text-sm">Your name</p>
         <input
           type="text"
           className="bg-white w-full text-gray-600 border border-gray-300 focus:border-black focus:ring-1 focus:ring-black rounded p-2"
-          value={username}
-          placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
+          value={ownername}
+          placeholder="Your name"
+          onChange={(e) => setOwnername(e.target.value)}
         />
       </div>
+      }
 
       <div className="flex flex-col gap-2 w-full">
         <p className="text-sm">Password</p>
@@ -141,6 +170,10 @@ export default function SignupForm() {
           {loading ? "Signing up..." : "SIGN UP"}
         </button>
       </div>
+
+      <h1 className="text-[13px] cursor-pointer">Already having Account?
+          <span className="text-blue-700" onClick={()=>{onSigninClick()}}> Signin</span>
+        </h1>
     </div>
   );
 }

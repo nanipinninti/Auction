@@ -187,7 +187,7 @@ export default function PlayerBoard(props) {
                     disabled
                     className="bg-[#787A7A] text-white px-6 py-2 rounded-lg cursor-not-allowed"
                   >
-                    Your Bid <br />
+                    <h1 className="text-[10px] uppercase">Your Bid</h1>
                     {toIndianCurrency(current_bid)}
                   </button>
                 )}

@@ -1,11 +1,11 @@
+import { useState } from "react";
 import NavBar from "@/components/layout/NavBar/NavBar";
 import Footer from "@/components/layout/Footer/footer";
 import Cookies from "js-cookie";
-import { useState } from "react";
-const DOMAIN = import.meta.env.VITE_DOMAIN;
 import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // Import SweetAlert for a clean UI
 
-import "./index.css";
+const DOMAIN = import.meta.env.VITE_DOMAIN;
 
 export default function AuctionRegistration() {
   const [auctionName, setAuctionName] = useState("");
@@ -14,6 +14,30 @@ export default function AuctionRegistration() {
   const [auctionUrl, setAuctionUrl] = useState(null);
   const [auctionDate, setAuctionDate] = useState("");
   const [auctionTime, setAuctionTime] = useState("");
+
+  // Get tomorrow's date in YYYY-MM-DD format to disable past dates
+  const getMinDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 1); // Block today and past dates
+    return today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+  };
+
+  const Instructions = () => {
+    Swal.fire({
+      title: "After completion of Registration",
+      html: `
+        <ul  style="text-align: left; font-size: 14px; line-height: 1.5; list-style-type: disc;">
+          <li>Do signup as Auctioneer</li>
+          <li>Auction <span style="color:red;">WONT START</span> automatically until AUCTIONEER start the auction</li>
+          <li>Add required data for the auction in dashboard</li>
+          <li>Click 'Confirm' to proceed with registration.</li>
+        </ul>
+      `,
+      icon: "info",
+      confirmButtonText: "Okay",
+      confirmButtonColor: "#2563eb",
+    })
+  };
 
   const RegisterAuction = async () => {
     const api = `${DOMAIN}/auction/add-auction`;
@@ -33,12 +57,13 @@ export default function AuctionRegistration() {
       },
       body: formData,
     };
+
     try {
       const response = await fetch(api, options);
       if (response.ok) {
         const data = await response.json();
         toast.success("Successfully registered");
-        console.log(data);
+        Instructions()
       } else {
         toast.error("Failed to register");
       }
@@ -63,7 +88,8 @@ export default function AuctionRegistration() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
                 value={auctionName}
                 onChange={(e) => setAuctionName(e.target.value)}
-                style={{ backgroundColor: "white", color: "black" }} // Explicit styles
+                placeholder="Ex: Indian Premier League"
+                style={{ fontSize: "14px" }} // Reduce placeholder size
               />
             </div>
 
@@ -76,16 +102,17 @@ export default function AuctionRegistration() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
                   value={auctionShortName}
                   onChange={(e) => setAuctionShortName(e.target.value)}
-                  style={{ backgroundColor: "white", color: "black" }} // Explicit styles
+                  placeholder="Ex: IPL"
+                  style={{ fontSize: "14px" }} // Reduce placeholder size
                 />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-sm font-medium text-gray-700">Logo</label>
                 <input
                   type="file"
+                  accept="image/png, image/jpeg"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
                   onChange={(e) => setAuctionUrl(e.target.files[0])}
-                  style={{ backgroundColor: "white", color: "black" }} // Explicit styles
                 />
               </div>
             </div>
@@ -98,7 +125,8 @@ export default function AuctionRegistration() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none bg-white text-gray-700"
                 value={auctionDescription}
                 onChange={(e) => setAuctionDescription(e.target.value)}
-                style={{ backgroundColor: "white", color: "black" }} // Explicit styles
+                placeholder="Describe your tournament"
+                style={{ fontSize: "14px" }} // Reduce placeholder size
               />
             </div>
 
@@ -111,7 +139,8 @@ export default function AuctionRegistration() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
                   value={auctionDate}
                   onChange={(e) => setAuctionDate(e.target.value)}
-                  style={{ backgroundColor: "white", color: "black", colorScheme: "light" }} // Explicit styles
+                  min={getMinDate()} // Block past dates
+                  style={{ fontSize: "14px" }} // Reduce placeholder size
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -121,7 +150,7 @@ export default function AuctionRegistration() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700"
                   value={auctionTime}
                   onChange={(e) => setAuctionTime(e.target.value)}
-                  style={{ backgroundColor: "white", color: "black", colorScheme: "light" }} // Explicit styles
+                  style={{ fontSize: "14px" }} // Reduce placeholder size
                 />
               </div>
             </div>

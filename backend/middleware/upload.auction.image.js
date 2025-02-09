@@ -44,17 +44,15 @@ const uploadAuctionImage = (req, res, next) => {
         if (err) {
             return res.status(400).json({ message: 'File upload failed', error: err.message });
         }
-        if (!req.file) {
-            return res.status(400).json({ message: 'No file provided or invalid file type' });
+
+        // If a file is uploaded, generate the full URL and attach it to the request
+        if (req.file) {
+            const fullUrl = `/uploads/auctions/${req.file.filename}`;
+            req.auction_img_url = fullUrl; // Attach the full image URL to the request object
+            res.locals.auction_img_url = fullUrl;
         }
 
-        // Generate the full URL (Replace `localhost` and port with actual host if needed)
-        const fullUrl = `/uploads/auctions/${req.file.filename}`;
-
-        // Attach the full image URL to the request object
-        req.auction_img_url = fullUrl;
-        res.locals.auction_img_url = fullUrl;
-        next();
+        next(); // Proceed to the next middleware or controller
     });
 };
 
