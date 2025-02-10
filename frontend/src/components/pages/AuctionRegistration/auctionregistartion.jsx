@@ -67,12 +67,12 @@ export default function AuctionRegistration() {
       if (response.ok) {
         const data = await response.json();
         toast.success("Successfully registered");
-        auctionName("")
-        auctionShortName("")
-        auctionDate("")
-        auctionTime("")
-        auctionDescription("")
-        auctionUrl(null)
+        setAuctionName("")
+        setAuctionShortName("")
+        setAuctionDate("")
+        setAuctionTime("")
+        setAuctionDescription("")
+        setAuctionUrl(null)
         Instructions()
       } else {
         toast.error("Failed to register");
