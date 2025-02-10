@@ -20,7 +20,7 @@ const LoginAPIs = {
 };
 
 export default function LoginForm({onSuccess,onSignupClick}) {
-    const [mode, setMode] = useState(modeNames.auctioneer);
+    const [mode, setMode] = useState(modeNames.customer);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");

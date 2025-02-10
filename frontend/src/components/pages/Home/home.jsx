@@ -131,7 +131,7 @@ export default function Home() {
 
         {/* Completed Auctions (Highlights) Section */}
         <div className="mb-8">
-          <h1 className="text-[22px] font-semibold text-[#FF3D51] mb-4">Highlights</h1>
+          <h1 className="text-[22px] font-semibold text-[#FF3D51] mb-4">Completed Auctions</h1>
 
           {isLoadingCompleted ? (
             <LoadingComponent />
@@ -150,8 +150,79 @@ export default function Home() {
             </div>
           )}
         </div>
-      </div>
 
+        <div className="flex flex-col sm:flex-row gap-5 sm:gap-2">
+            <div className="bg-white w-full sm:w-1/2 p-6 rounded-lg shadow-md">
+              <h1 className="text-2xl font-bold text-gray-800 mb-4">Features of Our Website</h1>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  Users can host their own cricket tournament auction.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  The auction process is fully automated.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  Owner can select Auctioneers and Teams/Franchises.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  A 30-second timer runs for each bid. If no bid is placed, the player is marked as Sold or Unsold.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  Users can add player details, including stats.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  Teams/Franchises can bid for players in real time.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✔</span>
+                  Non-auctioneers and non-franchise members can watch the auction in real time.
+                </li>
+              </ul>
+            </div>
+
+            {/* How to Use Section */}
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h1 className="text-2xl font-bold text-gray-800 mb-4">How to Use</h1>
+              <ul className="space-y-3 text-gray-700">
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  Sign up for an account.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  Register a tournament.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  Add sets, players, franchises, and auctioneers. (Dashboard section)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  Franchises and auctioneers must sign up to join your tournament.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  The auctioneer starts the auction, and the process runs automatically.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  All franchises must be on time, as only the auctioneer can control the timer once the auction begins.
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">➡️</span>
+                  Enjoy the experience!
+                </li>
+              </ul>
+            </div>
+        </div>
+
+      </div>
       <Footer />
     </div>
   );

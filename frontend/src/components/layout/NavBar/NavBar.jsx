@@ -119,8 +119,8 @@ export default function NavBar(){
                     </div>
                 }
 
-                {showAuthPopup && <AuthPopUp closePopup={()=>{setShowAuthPopup(false)}}/>  }
-                {showLogoutPopup && <LogoutPopup closePopup={()=>{setShowLogoutPopup(false)}} />}
+                {showAuthPopup && <AuthPopUp closePopup={()=>{setShowAuthPopup(false);setShowPopup(false)}}/>  }
+                {showLogoutPopup && <LogoutPopup closePopup={()=>{setShowLogoutPopup(false);}} />}
             </div>
         </div>
     )

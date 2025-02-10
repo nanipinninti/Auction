@@ -37,6 +37,11 @@ export default function Dashboard() {
   const fetchAuctions = async () => {
     setLoading(true);
     setError(false);
+    if (!Cookies.get("authenticated")){
+      setLoading(false)
+      setError("Please do Login")
+      return
+    }
     const api = currentOption.api;
     const options = {
       method: "GET",
@@ -102,7 +107,7 @@ export default function Dashboard() {
         {loading ? (
           <LoadingComponent />
         ) : error ? (
-          <FailureComponent />
+          <FailureComponent message={error} retryAction={()=>{fetchAuctions()}}/>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {(auctions.length === 0)?(

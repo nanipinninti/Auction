@@ -1,7 +1,7 @@
 import WebLogo from "../../../assets/images/web-logo.png"
 export default function Footer(){
     return (
-<footer className="footer bg-base-200 text-base-content p-10">
+<footer className="footer bg-[#F2F2F2] text-base-800 p-10">
     <div>
         <img 
             className="h-[150px]"

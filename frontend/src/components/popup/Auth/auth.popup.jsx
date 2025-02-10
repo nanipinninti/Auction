@@ -11,7 +11,7 @@ export default function AuthPopUp({closePopup}){
         </div>
         
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-fit h-fit z-30 bg-white rounded">
-            <div className="w-full sm:w-[400px] bg-white shadow-lg rounded-md">
+            <div className="w-[350px]  sm:w-[450px] bg-white shadow-lg rounded-md">
                 {showLogin&& <LoginForm onSuccess={()=>closePopup()} onSignupClick={()=>setShowLogin(!showLogin)}/>}                
                 {!showLogin&& <SignupForm onSuccess={()=>closePopup()} onSigninClick={()=>setShowLogin(!showLogin)}/>}
             </div>
