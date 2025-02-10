@@ -53,7 +53,7 @@ const LiveAuctions = async (req, res) => {
                     const [hours, minutes] = auction_time.split(":").map(Number);
                     auctionDate.setHours(hours, minutes, 0, 0); // Set hours and minutes
 
-                    return { _id, auction_name, auction_img, status, description, short_name, auctionDate };
+                    return { _id, auction_name, auction_img, status,auction_date, description, short_name, auctionDate };
                 } catch (err) {
                     console.error(err.message);
                     return null; // Skip invalid auctions
