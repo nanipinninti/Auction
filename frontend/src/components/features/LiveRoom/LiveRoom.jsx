@@ -14,7 +14,7 @@ import LoadingComponent from "@/components/common/Loader/loader";
 import FailureComponent from "@/components/common/Failure/failure";
 import AuctionPause from "../AuctionPause/auctionpause";
 import SuccessModal from "@/components/popup/Notification/success";
-
+import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
 const modeNames = {
@@ -65,8 +65,8 @@ export default function LiveRoom() {
       console.log(message);
     });
 
-    socket.on("auction-stopped",()=>{
-      toast.error("Auction is stopped..")
+    socket.on("auction-completed",()=>{
+      AuctionCompletion()
     })
     socket.on("refresh", () => {
       fetchAuctionDetails();
@@ -74,16 +74,24 @@ export default function LiveRoom() {
 
     socket.on("player-sold-unsold", (data) => {
       if (!data.sold){        
-        setPopUpMessage(data.message)
+        toast.success(data.message)
       }else{
         const franchise_name = franchise_details && franchise_details[data.franchise_id]
         ? franchise_details[data.franchise_id].franchise_name
         : "#";
-        setPopUpMessage(data.message + franchise_name)
+
+        if (data.franchise_id === Cookies.get("franchise_id")){        
+            PlayerBuySucess(data.message + franchise_name)
+        }else{
+          toast.success(data.message + franchise_name)
+        }
       }
       setShowPopUp(true)
     });
 
+    socket.on("pick-set",(data)=>{
+        toast.success("Set has been changed")
+    })
     socket.on("end_time",(end_time)=>{
       setEndTime(end_time)
     })
@@ -94,6 +102,31 @@ export default function LiveRoom() {
       socket.disconnect();
     };
   }, [auction_id]);
+
+  // swal poups
+const PlayerBuySucess = (msg)=>{
+      Swal.fire({
+        title: "Bid Success",
+        html: `
+          <h1>${msg}</h1>
+        `,
+        icon: "success",
+        confirmButtonText: "Okay",
+        confirmButtonColor: "#2563eb",
+  });
+}
+
+const AuctionCompletion = (msg)=>{
+  Swal.fire({
+    title: "Auction Completed",
+    html: `
+      <h1>Successfully auction is completed.</h1>
+    `,
+    icon: "success",
+    confirmButtonText: "Okay",
+    confirmButtonColor: "#2563eb",
+});
+}
 
 
   const fetchAuctionDetails = async () => {
@@ -110,6 +143,7 @@ export default function LiveRoom() {
         setAuctionName(data.auction_name)
         setAuctionDetails(data.auction_details);
         setPlayerId(data.auction_details.current_player);
+        sessionStorage.setItem("current_set",data.auction_details.current_set)
         sessionStorage.setItem("bid_ratio", JSON.stringify(data.bid_ratio));
       } else {
         toast.error("Failted to Fetch");
@@ -257,6 +291,7 @@ export default function LiveRoom() {
       const response = await fetch(api, options);
       if (response.ok) {
         fetchAuctionDetails();
+        toast.success("Bid raise success")
         socket.emit("reset",auction_id)
         socket.emit("refresh");
       } else {
@@ -289,7 +324,7 @@ export default function LiveRoom() {
           if (set_no===-1){
             SendPlayer()
           }
-          toast.error("Succesfully set the Set");
+          toast.success("Succesfully set the Set");
         }
         else if(data.code === "end-auction") {
           return EndAuction()
@@ -317,9 +352,9 @@ export default function LiveRoom() {
     try {
       const response = await fetch(api, options);
       if (response.ok) {
-        toast.error("Auction is successfully completed");   
+        AuctionCompletion()  
         setCurrentStatus(statusNames.completed);
-     
+        socket.emit("auction-completed",auction_id)
         fetchAuctionDetails();      
         socket.emit("refresh");
       } else {
@@ -373,7 +408,7 @@ export default function LiveRoom() {
          />
 
           {/* Popups */}
-          <SuccessModal isOpen={showPopUp} onClose={()=>{setShowPopUp(false)}} msg={popUpMessage}/>
+          {/* <SuccessModal isOpen={showPopUp} onClose={()=>{setShowPopUp(false)}} msg={popUpMessage}/> */}
         </div>
     }
 

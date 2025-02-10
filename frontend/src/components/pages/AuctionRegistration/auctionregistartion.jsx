@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer/footer";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2"; // Import SweetAlert for a clean UI
+import isFutureDateTime from "@/utils/isFuture";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -18,13 +19,13 @@ export default function AuctionRegistration() {
   // Get tomorrow's date in YYYY-MM-DD format to disable past dates
   const getMinDate = () => {
     const today = new Date();
-    today.setDate(today.getDate() + 1); // Block today and past dates
+    today.setDate(today.getDate()); // Block today and past dates
     return today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
   };
 
   const Instructions = () => {
     Swal.fire({
-      title: "After completion of Registration",
+      title: "Registration successfull.",
       html: `
         <ul  style="text-align: left; font-size: 14px; line-height: 1.5; list-style-type: disc;">
           <li>Do signup as Auctioneer</li>
@@ -33,7 +34,7 @@ export default function AuctionRegistration() {
           <li>Click 'Confirm' to proceed with registration.</li>
         </ul>
       `,
-      icon: "info",
+      icon: "success",
       confirmButtonText: "Okay",
       confirmButtonColor: "#2563eb",
     })
@@ -41,6 +42,10 @@ export default function AuctionRegistration() {
 
   const RegisterAuction = async () => {
     const api = `${DOMAIN}/auction/add-auction`;
+    if (!isFutureDateTime(auctionDate,auctionTime)){
+      toast.error("Date and time should be future!")
+      return
+    }
     const formData = new FormData();
     formData.append("auction_name", auctionName);
     formData.append("auction_date", auctionDate);
@@ -53,7 +58,6 @@ export default function AuctionRegistration() {
       method: "POST",
       credentials: "include",
       headers: {
-        Authorization: `Bearer ${Cookies.get("customer_token")}`,
       },
       body: formData,
     };
@@ -63,6 +67,12 @@ export default function AuctionRegistration() {
       if (response.ok) {
         const data = await response.json();
         toast.success("Successfully registered");
+        auctionName("")
+        auctionShortName("")
+        auctionDate("")
+        auctionTime("")
+        auctionDescription("")
+        auctionUrl(null)
         Instructions()
       } else {
         toast.error("Failed to register");
@@ -71,7 +81,6 @@ export default function AuctionRegistration() {
       toast.error("Internal Server Error");
     }
   };
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <NavBar />

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
-import { toast } from "react-toastify";
+
 
 const modeNames = {
   customer: "customer",
@@ -11,11 +12,37 @@ const modeNames = {
 };
 
 export default function AuctionPause(props) {
-  const [pickSet, setPickSet] = useState(1);
+  const [pickSet, setPickSet] = useState(sessionStorage.getItem("current_set"));
   const [setsInfo, setSetsInfo] = useState([]);
 
-  const { mode, PickSet, BeginAuction } = props;
+  const { mode, BeginAuction,PickSet } = props;
   const { auction_id } = useParams();
+
+  const ChangeSet = async () => {
+    const set_no = pickSet;
+    const api =  `${DOMAIN}/auction-actions/pick-set`;
+    const options = {
+      method: "POST",
+      credentials: "include", 
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        auction_id,
+        set_no,
+      }),
+    };
+    try {
+      const response = await fetch(api, options);
+      if (response.ok) {
+        toast.success("Succesfully set the Set");
+      } else {
+        toast.error("Failed to Pick the set, Try again");
+      }
+    } catch (error) {
+      toast.error("Servor Error");
+    }
+  };
 
   useEffect(() => {
     fetchSetsInfo();
@@ -85,7 +112,7 @@ export default function AuctionPause(props) {
             </select>
             <button
               className="w-full mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
-              onClick={PickSet}
+              onClick={ChangeSet}
             >
               Save
             </button>

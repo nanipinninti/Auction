@@ -12,8 +12,11 @@ import { IoIosArrowDropup } from "react-icons/io";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
 import { GoPencil } from "react-icons/go";
 import { useParams } from "react-router-dom";
+import {toast} from "react-toastify"
+import isFutureDateTime from "@/utils/isFuture";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
+
 
 export default function AuctionConfigurations() {
   const [showEdit, setShowEdit] = useState(true);
@@ -30,12 +33,11 @@ export default function AuctionConfigurations() {
   const { auction_id } = useParams();
   const auctionId = auction_id;
 
+
   // Calculate the minimum date (next day) when the component mounts
   useEffect(() => {
     const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    const minDateString = tomorrow.toISOString().split("T")[0];
+    const minDateString = today.toISOString().split("T")[0];
     setMinDate(minDateString);
   }, []);
 
@@ -101,6 +103,10 @@ export default function AuctionConfigurations() {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    if (!isFutureDateTime(auctionDate,auctionTime)){
+      toast.error("Date and time should be Future")
+      return
+    }
     const formData = new FormData();
     formData.append("auction_name", auctionName);
     formData.append("short_name", auctionShortName);

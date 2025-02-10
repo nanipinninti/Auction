@@ -51,7 +51,9 @@ const setupSocket = (io) => {
     }
     });
 
-
+    socket.on("auction-completed",(auction_id)=>{
+      io.to(auction_id).emit("auction-completed")
+    })
     // Handle refreshing the auction room
     socket.on("refresh", () => {
       if (socket.auction_id) {
@@ -112,6 +114,7 @@ const startAuctionProcess = (io, auction_id, duration = 30) => {
 
             if (send_new_player.success) {
               io.to(auction_id).emit("refresh");
+              io.to(auction_id).emit("pick-set",send_new_player)
               const endTime = Math.floor(Date.now() / 1000) + duration;
               io.to(auction_id).emit("end_time", endTime);
 

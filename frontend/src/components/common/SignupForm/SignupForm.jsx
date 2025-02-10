@@ -127,7 +127,7 @@ export default function SignupForm({onSuccess,onSigninClick}) {
 
       {(mode===modeNames.franchise)&&
       <div className="flex flex-col gap-2 w-full">
-        <p className="text-sm">Your name</p>
+        <p className="text-sm">Owner name</p>
         <input
           type="text"
           className="bg-white w-full text-gray-600 border border-gray-300 focus:border-black focus:ring-1 focus:ring-black rounded p-2"
