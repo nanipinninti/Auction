@@ -3,7 +3,11 @@ import LiveRoom from "@/components/features/LiveRoom/LiveRoom"
 import NavBar from "@/components/layout/NavBar/NavBar"
 import { useEffect } from "react"
 import Footer from "@/components/layout/Footer/footer";
+
 import PlayerStatus from "@/components/features/PlayersStatus/playersstatus";
+import FranchiesStatus from "@/components/features/FranchiesStatus/franchisestatus";
+import Sets from "@/components/features/Sets/sets";
+
 import { toast } from "react-toastify";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
@@ -44,7 +48,16 @@ export default function AuctionRoom(){
             <div className="px-[25px] sm:px-[30px] mt-3 max-w-[1400px] mx-auto">
                 <LiveRoom />
             </div>
-            <div>
+
+            <div className="px-[25px] sm:px-[30px] max-w-[1400px] mx-auto ">
+                <FranchiesStatus />
+            </div>
+
+            <div className="px-[25px] sm:px-[30px]  max-w-[1400px] mx-auto">
+                <Sets />
+            </div>
+
+            <div >
                 <PlayerStatus />
             </div>
             <Footer/>

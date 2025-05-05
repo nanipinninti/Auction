@@ -173,6 +173,7 @@ const SendPlayer = async (req,res)=>{
     }
 }
 
+//  There is a bug that even though franchise not having enough purse, it can bid. 
 const RaiseBid = async (req,res)=>{
     const auction = req.auction;
     const {amount} = req.body
@@ -192,6 +193,45 @@ const RaiseBid = async (req,res)=>{
                 message: "Biddedd by other frnachise!"
             });
         }
+        if (auction.auction_details.current_franchise===req.franchise_id){
+            return res
+            .status(500).json({
+                success: false,
+                message: "Can't bid conseuctively"
+            });
+        }
+
+        auction.auction_details.current_bid = amount
+        auction.auction_details.current_franchise = req.franchise_id
+        await auction.save()        
+        res.status(201).json({
+            success: true
+        });
+    } catch (error) {
+        console.error("Error Raising the bid :", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        });
+    }
+}
+
+// Here theere is an bug, we need to check whether franchise exist or not (simple bug)
+const RaiseBidByAuctioneer = async (req,res)=>{
+    const auction = req.auction;
+    const {amount} = req.body
+    req.franchise_id = req.body.franchise_id
+
+    if (auction.status !== "ongoing"){
+        return res.status(201).json({
+            success: false,
+            message : "Auction is not ongoing. It might completed or paused or not yet started!",
+            code : "start-auction"
+        });
+    }
+
+    try {
         if (auction.auction_details.current_franchise===req.franchise_id){
             return res
             .status(500).json({
@@ -404,4 +444,4 @@ const EndAuction = async (req, res) => {
 };
 
 
-module.exports = { SoldPlayer,SendPlayer,StartAuction ,PickSet,PauseAuction,EndAuction,RaiseBid,UnSoldPlayer};
+module.exports = { SoldPlayer,SendPlayer,StartAuction ,PickSet,PauseAuction,EndAuction,RaiseBid,UnSoldPlayer,RaiseBidByAuctioneer};

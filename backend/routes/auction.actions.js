@@ -1,5 +1,5 @@
 const express = require("express");
-const {SoldPlayer,SendPlayer,PickSet,StartAuction,PauseAuction,EndAuction,RaiseBid,UnSoldPlayer} = require("../controllers/auction.actions");
+const {SoldPlayer,SendPlayer,PickSet,StartAuction,PauseAuction,EndAuction,RaiseBid,UnSoldPlayer,RaiseBidByAuctioneer} = require("../controllers/auction.actions");
 const {verifyAuctioneerToken} = require("../middleware/auctioneer.token.verification")
 const {verifyFranchiseToken} = require("../middleware/franchise.token.verification")
 const {validateAuctionAuctioneer,validateAuctionFranchise} = require("../middleware/validate.auction")
@@ -13,6 +13,7 @@ router.post("/pause-auction", verifyAuctioneerToken,validateAuctionAuctioneer,Pa
 router.post("/end-auction", verifyAuctioneerToken,validateAuctionAuctioneer,EndAuction);
 router.post("/send-player", verifyAuctioneerToken,validateAuctionAuctioneer,SendPlayer);
 router.post("/raise-bid", verifyFranchiseToken,validateAuctionFranchise,RaiseBid);
+router.post("/raise-bid-by-auctioneer", verifyAuctioneerToken,validateAuctionAuctioneer,RaiseBidByAuctioneer);
 
 
 

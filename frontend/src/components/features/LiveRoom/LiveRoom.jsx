@@ -92,6 +92,7 @@ export default function LiveRoom() {
     socket.on("pick-set",(data)=>{
         toast.success("Set has been changed")
     })
+    
     socket.on("end_time",(end_time)=>{
       setEndTime(end_time)
     })
@@ -303,6 +304,36 @@ const AuctionCompletion = (msg)=>{
     }
   };
 
+  const RaiseBidByAuctioneer = async (franchise_id,current_bid) => {
+    const api = `${DOMAIN}/auction-actions/raise-bid-by-auctioneer`;
+    const options = {
+      method: "POST",
+      credentials: "include", 
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        auction_id,
+        franchise_id ,
+        amount: current_bid,
+      }),
+    };
+    try {
+      const response = await fetch(api, options);
+      if (response.ok) {
+        fetchAuctionDetails();
+        toast.success("Bid raise success")
+        socket.emit("reset",auction_id)
+        socket.emit("refresh");
+      } else {
+        toast.error("Failed to Raise the Bid, Try again");
+        fetchAuctionDetails();
+      }
+    } catch (error) {
+      toast.error("Servor Error");
+    }
+  };
+
   const PickSet = async (set_no = -1) => {
     const api =  `${DOMAIN}/auction-actions/pick-set`;
     const options = {
@@ -375,7 +406,7 @@ const AuctionCompletion = (msg)=>{
     fetchAuctionDetails();
   }
 
-  const methods = {PauseAuction,SoldPlayer,UnSoldPlayer,RaiseBid}
+  const methods = {PauseAuction,SoldPlayer,UnSoldPlayer,RaiseBid,RaiseBidByAuctioneer}
   return(
     <div className="bg-gray-50 text-[#323232]">      
       <h1 className="text-[19px] sm:text-[20px] font-semibold  my-5 capitalize">{auctionName}</h1>

@@ -26,17 +26,6 @@ export default function Home() {
   const [errorCompleted, setErrorCompleted] = useState(false);
 
   useEffect(() => {
-    Swal.fire({
-      title: "Note",
-      html: `
-        <ul  style="text-align: left; font-size: 14px; line-height: 1.5; list-style-type: disc;">
-          <li>Backend servers are running in USA region. So our website follows USA timings.</li>
-        </ul>
-      `,
-      icon: "info",
-      confirmButtonText: "Okay",
-      confirmButtonColor: "#2563eb",
-    });
     fetchLiveAuctions();
     fetchCompletedAuctions();
   }, []);

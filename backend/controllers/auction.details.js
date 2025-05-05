@@ -31,6 +31,38 @@ const GetSets = async (req, res) => {
   }
 };
 
+
+
+// Hasn't writed code here yet
+const PurseLeft = async (req, res) => {
+  const { auction_id } = req.query;
+  if (!auction_id) {
+    return res.status(401).json({
+      success: false,
+      message: "Auction Id is required",
+    });
+  }
+  try {
+    const auction = await Auction.findOne({ _id: auction_id }).select("franchises");
+    if (!auction) {
+      return res.status(401).json({
+        success: false,
+        message: "Auction doesn't existed",
+      });
+    }
+    return res.status(201).json({
+      success: true,
+      franchises: auction.franchises,
+    });
+  } catch (error) {
+    console.log("Error while getting sold player list : ", error);
+    res.status(501).json({
+      success: false,
+      error: error.message,
+    });
+  }
+}
+
 const RemainingSets = async (req, res) => {
   const { auction_id } = req.query;
   console.log(auction_id)
@@ -93,6 +125,109 @@ const RemainingSets = async (req, res) => {
   }
 };
 
+const PlayersInSet = async (req,res)=>{
+  const { auction_id, set_no } = req.query;
+  if (!auction_id || !set_no) {
+    return res.status(401).json({
+      success: false,
+      message: "Auction Id and Set No is required",
+    });
+  }
+
+  try{
+    const auction = await Auction.findOne({ _id: auction_id }).select("sets players");
+    if (!auction) {
+      return res.status(401).json({
+        success: false,
+        message: "Auction doesn't existed",
+      });
+    }
+
+    const players_info = auction.players.filter(
+      (player) => player.set_no == set_no
+    ).map((player) => {
+      return {
+        player_name: player.player_name,
+        base_price: player.base_price,
+        sold_price: player.sold_price,
+        status: player.status,
+      };
+    } );
+
+    return res.status(201).json({
+      success: true,
+      players_info
+    });
+  }catch(error){
+    console.log("Error while getting sold player list : ", error);
+    res.status(501).json({
+      success: false,
+      error: error.message,
+    });
+  }
+
+}
+
+const FranchiseStatus = async (req, res) => {
+  const { auction_id } = req.query;
+  if (!auction_id) {
+    return res.status(401).json({
+      success: false,
+      message: "Auction Id is required",
+    });
+  }
+
+  try {
+    // Find the auction by ID and select the necessary fields
+    const auction = await Auction.findOne({ _id: auction_id }).select(
+      "franchises players"
+    );
+
+    if (!auction) {
+      return res.status(401).json({
+        success: false,
+        message: "Auction doesn't exist",
+      });
+    }
+
+    const franchise_status = {};
+
+    // Iterate through each franchise and calculate remaining purse and players bought
+    for (const franchise of auction.franchises) {
+      const { franchise_id, players, total_purse, spent } = franchise;
+      const players_bought = players.length;
+      const remaining_purse = total_purse - spent;
+      const players_bought_list = players.map((player_id) => {
+        const player = auction.players.find(
+          (player) => player._id.toString() === player_id.toString()
+        );
+        return {
+          player_name: player.player_name,
+          base_price: player.base_price,
+          sold_price: player.sold_price,
+          set_no: player.set_no,
+        };
+      });
+
+      franchise_status[franchise_id] = {
+        remaining_purse,
+        players_bought,
+        players_bought_list
+      };
+    }
+
+    return res.status(201).json({
+      success: true,
+      franchise_status,
+    });
+  } catch (error) {
+    console.log("Error while getting remaining sets: ", error);
+    res.status(501).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 const PlayerDetails = async (req, res) => {
   const { player_id, auction_id } = req.query;
   if (!player_id || !auction_id) {
@@ -329,6 +464,7 @@ const AvailablePlayers = async (req, res) => {
     }
   };
 
+
 module.exports = {
   SoldPlayers,
   UnSoldPlayers,
@@ -337,5 +473,7 @@ module.exports = {
   GetSets,
   PlayerDetails,
   RemainingSets,
-  AvailablePlayers
+  AvailablePlayers,
+  FranchiseStatus,
+  PlayersInSet
 };
