@@ -21,6 +21,7 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "fs": "^0.0.1-security",
     "js-cookie": "^3.0.5",
     "js-cookies": "^1.0.4",
     "lucide-react": "^0.471.1",

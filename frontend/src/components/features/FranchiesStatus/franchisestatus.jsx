@@ -14,7 +14,10 @@ const FranchiseStatus = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    loadFranchiseData();
+    const timer = setTimeout(() => {
+      loadFranchiseData();
+    });
+    return () => clearTimeout(timer);
   }, []);
 
   const loadFranchiseData = () => {
