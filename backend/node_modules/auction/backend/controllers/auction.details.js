@@ -228,6 +228,7 @@ const FranchiseStatus = async (req, res) => {
     });
   }
 };
+
 const PlayerDetails = async (req, res) => {
   const { player_id, auction_id } = req.query;
   if (!player_id || !auction_id) {

@@ -5,6 +5,8 @@ function filterValidObjects(arr) {
       !Object.values(obj).some(value => typeof value === 'string' && value.trim() === "")
     );
 }
+
+// Rewrite
 const addPlayers = async (req, res) => {
     const { players, auction_id } = req.body; // Players and auction_id
     const customer_id = req.customer_id; // Authenticated customer's ID
@@ -76,6 +78,74 @@ const addPlayers = async (req, res) => {
     }
 };
 
+// Add new Players
+const addNewPlayers = async (req, res) => { 
+    const { players, auction_id } = req.body; // Players and auction_id
+    const customer_id = req.customer_id; // Authenticated customer's ID
+
+    try {
+        // Step 1: Find the auction by auction_id
+        const auction = await Auction.findOne({ _id: auction_id }).select("players customer_id sets");
+        if (!auction) {
+            return res.status(404).json({ message: "Auction not found" });
+        }
+
+        // Step 2: Check if the customer_id matches the auction owner
+        if (auction.customer_id.toString() !== customer_id) {
+            return res.status(403).json({ message: "Invalid customer, this is not your auction" });
+        }
+
+        const sets = new Set(auction.sets.map(set => set.set_no.toString()));
+
+        // Step 3: Filter out invalid players
+        const filteredPlayers = players.filter(player => 
+            player.set_no &&
+            player.player_name &&
+            player.base_price &&
+            player.age &&
+            player.country &&
+            player.Type &&
+            player.stats &&
+            player.stats.matches_played !== undefined &&
+            player.stats.runs !== undefined &&
+            player.stats.avg !== undefined &&
+            player.stats.strike_rate !== undefined &&
+            player.stats.fifties !== undefined &&
+            player.stats.hundreds !== undefined &&
+            player.stats.wickets !== undefined &&
+            player.stats.bowling_avg !== undefined &&
+            player.stats.three_wicket_haul !== undefined &&
+            player.stats.stumpings !== undefined
+        );
+
+        for (let player of filteredPlayers) {
+            const { set_no } = player;
+
+            // Step 4: Check if the set_no exists in the `sets` array
+            if (!sets.has(set_no.toString())) {
+                return res.status(400).json({ message: `Set ${set_no} does not exist` });
+            }
+        }
+
+        for (let player of filteredPlayers) {
+            auction.players.push(player);
+        }
+
+        await auction.save()
+        return res.status(201).json({
+            message: "Players added successfully!",
+            players: auction.players,
+        });
+
+    }catch(error){
+        console.error("Error during adding players:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        });
+}
+}
 const getAllPlayerDetails  = async (req,res)=>{
     const {auction_id} = req.query
     try{
@@ -134,5 +204,5 @@ const GetPlayerDetails = async (req,res) =>{
         });
     }
 }
-module.exports = { addPlayers,GetPlayerDetails ,getAllPlayerDetails};
+module.exports = { addPlayers,GetPlayerDetails ,getAllPlayerDetails,addNewPlayers};
 

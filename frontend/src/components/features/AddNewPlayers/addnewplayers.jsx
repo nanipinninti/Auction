@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useParams } from "react-router-dom";
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
-export default function AddPlayers() {
+export default function AddNewPlayers() {
     const [rows, setRows] = useState([{ 
         name: "", img: "",setNo:"", age: "", basePrice: "", country: "", type: "", 
         matchesPlayed: "", runs: "", avg: "", strikeRate: "", fifties: "", 
@@ -13,57 +13,11 @@ export default function AddPlayers() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showErrorModal, setShowErrorModal] = useState(false);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loading, setLoading] = useState(false); // Loading state
     const inputRefs = useRef([]);
     const { auction_id } = useParams(); // Get auction_id from URL
 
-    // Fetch saved players from API
-    useEffect(() => {
-        const fetchPlayers = async () => {
-            try {
-                const response = await fetch(`${DOMAIN}/players/all?auction_id=${auction_id}`, {
-                    credentials : "include",
-                    headers: {                        
-                    "Content-Type": "application/json"
-                    },
-                });
-                const data = await response.json();
-                if (data.success) {
-                    const fetchedRows = data.players.map(player => ({
-                        name: player.player_name,
-                        img: player.image_url,
-                        setNo : player.set_no,
-                        age: player.age,
-                        basePrice: player.base_price,
-                        country: player.country,
-                        type: player.Type,
-                        matchesPlayed: player.stats.matches_played,
-                        runs: player.stats.runs,
-                        avg: player.stats.avg,
-                        strikeRate: player.stats.strike_rate,
-                        fifties: player.stats.fifties,
-                        hundreds: player.stats.hundreds,
-                        wickets: player.stats.wickets,
-                        bowlingAvg: player.stats.bowling_avg,
-                        threeWicketHaul: player.stats.three_wicket_haul,
-                        stumpings: player.stats.stumpings
-                    }));
-                    if (fetchedRows.length > 0) {
-                        setRows(fetchedRows);
-                    }
-                } else {
-                    setShowErrorModal(true);
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                setShowErrorModal(true);
-            } finally {
-                setLoading(false); // Set loading to false after fetching
-            }
-        };
 
-        fetchPlayers();
-    }, [auction_id]); // Fetch data when auction_id changes
 
     const addRow = () => {
         setRows([...rows, { 
@@ -180,11 +134,6 @@ export default function AddPlayers() {
     };
 
     const addPlayers = async () => {
-        // Let's block this method for now
-        let a = 1;
-        if (a===1){
-            return 0
-        }
         const playerData = rows.map(row => ({
             player_name: row.name,
             image_url: row.img,
@@ -212,9 +161,8 @@ export default function AddPlayers() {
             players: playerData
         };
 
-
         try {
-            const response = await fetch(`${DOMAIN}/players/add`, {
+            const response = await fetch(`${DOMAIN}/players/new-players-add`, {
                 method: 'POST',
                 credentials: "include", 
                 headers: { 
@@ -226,6 +174,11 @@ export default function AddPlayers() {
             const data = await response.json();
             if (response.ok) {
                 setShowSuccessModal(true);
+                setRows([{ 
+                    name: "", img: "",setNo:"", age: "", basePrice: "", country: "", type: "", 
+                    matchesPlayed: "", runs: "", avg: "", strikeRate: "", fifties: "", 
+                    hundreds: "", wickets: "", bowlingAvg: "", threeWicketHaul: "", stumpings: "" 
+                }]);
             } else {
                 setShowErrorModal(true);
             }
@@ -301,14 +254,12 @@ export default function AddPlayers() {
                         </button>
                     </div>
 
-                    {/* Blocking add players button we need to do solve it */}
-
-                    {/* <button
+                    <button
                             onClick={addPlayers}
                             className="p-1 w-fit px-4 bg-[#60A5FA] text-white rounded"
                         >
                             Save
-                    </button> */}
+                    </button>
 
                     {/* Delete Modal */}
                     {showDeleteModal && (

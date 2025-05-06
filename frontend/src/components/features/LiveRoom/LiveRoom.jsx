@@ -16,6 +16,8 @@ import AuctionPause from "../AuctionPause/auctionpause";
 import SuccessModal from "@/components/popup/Notification/success";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { AutoAwesomeMotionTwoTone } from "@mui/icons-material";
+import { Pause } from "lucide-react";
 
 const modeNames = {
   customer: "customer",
@@ -174,7 +176,10 @@ const AuctionCompletion = (msg)=>{
         if (data.success){
           fetchAuctionDetails();
         }else{
-          PickSet()
+          //It is for Automation
+          // PickSet()  
+          PauseAuction()
+          toast.success("This set is completed, wait for the next set")
         }        
         socket.emit("refresh");
         socket.emit("reset",auction_id)

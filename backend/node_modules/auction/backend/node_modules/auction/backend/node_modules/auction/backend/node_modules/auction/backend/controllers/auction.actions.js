@@ -201,6 +201,18 @@ const RaiseBid = async (req,res)=>{
             });
         }
 
+        const franchise = auction.franchises.find(
+            (franchise) => franchise.franchise_id.toString() === req.franchise_id
+        );
+        const purse_remaining = franchise.total_purse - franchise.spent
+
+        if (purse_remaining < amount){
+            return res.status(500).json({
+                success: false,
+                message: "Insufficient purse!"
+            });
+        }
+
         auction.auction_details.current_bid = amount
         auction.auction_details.current_franchise = req.franchise_id
         await auction.save()        
@@ -239,6 +251,20 @@ const RaiseBidByAuctioneer = async (req,res)=>{
                 message: "Can't bid conseuctively"
             });
         }
+
+        const franchise = auction.franchises.find(
+            (franchise) => franchise.franchise_id.toString() === req.franchise_id
+        );
+        const purse_remaining = franchise.total_purse - franchise.spent
+
+        if (amount > purse_remaining ){
+            return res.status(500).json({
+                success: false,
+                message: "Insufficient purse!"
+            });
+        }
+        console.log("amount : ", amount, " purse_remaining : ", purse_remaining)
+        
         auction.auction_details.current_bid = amount
         auction.auction_details.current_franchise = req.franchise_id
         await auction.save()        

@@ -14,6 +14,7 @@ import { GoPencil } from "react-icons/go";
 import { useParams } from "react-router-dom";
 import {toast} from "react-toastify"
 import isFutureDateTime from "@/utils/isFuture";
+import AddNewPlayers from "@/components/features/AddNewPlayers/addnewplayers";
 
 const DOMAIN = import.meta.env.VITE_DOMAIN;
 
@@ -312,6 +313,11 @@ export default function AuctionConfigurations() {
                 <h1 className="text-xl">Add Players</h1>
                 <AddPlayers />
               </div>
+              <div>
+                <h1 className="text-xl">Add New Players</h1>
+                <AddNewPlayers />
+              </div>
+              
             </div>
           </div>
         </div>
