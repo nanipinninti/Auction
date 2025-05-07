@@ -145,8 +145,8 @@ export default function PlayerBoard(props) {
                     <h2 className="text-[18px]  mb-4">Bowling Stats</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       <StatCard label="Wickets" value={wickets} />
-                      <StatCard label="Bowling Average" value={bowling_avg} />
-                      <StatCard label="3-Wicket Hauls" value={three_wicket_haul} />
+                      <StatCard label="Economy" value={bowling_avg} />
+                      <StatCard label="5-Wicket Hauls" value={three_wicket_haul} />
                     </div>
                   </div>
                 </div>
