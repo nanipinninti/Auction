@@ -93,7 +93,7 @@ const FranchiseStatus = () => {
     <div className="bg-gray-50 w-full sm:p-6">
       <div className="bg-white rounded-md shadow-lg py-4">
         <div className="flex justify-between items-center px-6 py-4 border-b">
-          <h1 className="text-2xl font-bold">Franchise Status</h1>
+          <h1 className="text-[18px] font-semibold">Franchise Status</h1>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -150,7 +150,7 @@ const FranchiseStatus = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-6">
               {franchises.map((franchise) => (
                 <div
                   key={franchise.id}
@@ -161,7 +161,7 @@ const FranchiseStatus = () => {
                     <div className="flex items-center space-x-4">
                       <div className="flex-shrink-0">
                         <img
-                          className="h-16 w-16 rounded-full object-cover"
+                          className="h-[80px] w-[80px] rounded-full object-cover"
                           src={
                             franchise.franchise_url ||
                             "https://via.placeholder.com/150"

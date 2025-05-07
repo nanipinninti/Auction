@@ -33,7 +33,7 @@ const setupSocket = (io) => {
 
     // Handle starting the auction timer
     socket.on("start-timer", (auction_id) => {
-      const end_time = startAuctionProcess(io, auction_id, 30);
+      const end_time = startAuctionProcess(io, auction_id, 90);
       io.to(auction_id).emit("end_time", end_time);
     });
 
@@ -74,7 +74,7 @@ const setupSocket = (io) => {
   });
 };
 
-const startAuctionProcess = (io, auction_id, duration = 30) => {
+const startAuctionProcess = (io, auction_id, duration = 90) => {
   const end_time = Math.floor(Date.now() / 1000) + duration;
   console.log(`Starting auction process for Auction ID: ${auction_id}, End Time: ${end_time}`);
 
@@ -170,7 +170,7 @@ const resetAuctionTimer = (io, auction_id) => {
     activeAuctions.delete(auction_id); // Remove the auction from activeAuctions
 
     // Start a new timer and get the end_time
-    const end_time = startAuctionProcess(io, auction_id, 30);
+    const end_time = startAuctionProcess(io, auction_id, 90);
     console.log(`New End Time for Auction ID ${auction_id}: ${end_time}`);
 
     // Emit the new end_time to the room immediately

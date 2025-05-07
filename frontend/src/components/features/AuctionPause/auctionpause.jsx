@@ -12,7 +12,7 @@ const modeNames = {
 };
 
 export default function AuctionPause(props) {
-  const [pickSet, setPickSet] = useState(sessionStorage.getItem("current_set"));
+  const [pickSet, setPickSet] = useState(sessionStorage.getItem("current_set") || 0);
   const [setsInfo, setSetsInfo] = useState([]);
 
   const { mode, BeginAuction,PickSet } = props;
@@ -58,6 +58,7 @@ export default function AuctionPause(props) {
       if (response.ok) {
         const data = await response.json();
         setSetsInfo([...data.sets]);
+        pickSet(data.sets[0].set_no);
       }
     } catch {
       toast.error("Internal server error");
