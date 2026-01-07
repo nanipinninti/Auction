@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  backend:
+    build: .
+    container_name: node-backend
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
