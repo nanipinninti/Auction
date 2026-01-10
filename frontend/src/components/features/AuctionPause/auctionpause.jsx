@@ -49,6 +49,7 @@ export default function AuctionPause(props) {
   }, []);
 
   const fetchSetsInfo = async () => {
+    if (!auction_id) return;
     const api = `${DOMAIN}/auction-details/remaining-sets?auction_id=${auction_id}`;
     const options = {
       method: "GET",
@@ -57,11 +58,15 @@ export default function AuctionPause(props) {
       const response = await fetch(api, options);
       if (response.ok) {
         const data = await response.json();
-        setSetsInfo([...data.sets]);
-        pickSet(data.sets[0].set_no);
+        if (data.success && data.sets.length > 0) {
+          setSetsInfo(data.sets);
+          setPickSet(data.sets[0].set_no);
+          // toast.success("Fetched sets info successfully");
+        } 
       }
-    } catch {
-      toast.error("Internal server error");
+    } catch (error)
+    {
+      console.error("Error fetching sets info:", error);
     }
   };
 
@@ -103,6 +108,7 @@ export default function AuctionPause(props) {
               value={pickSet}
               onChange={(e) => setPickSet(Number(e.target.value))}
             >
+              <option value="" disabled>Select a Set</option>
               {setsInfo
                 .filter((set) => set.status === "Available")
                 .map((set) => (

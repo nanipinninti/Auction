@@ -1,25 +1,22 @@
 export default function toIndianCurrency(number) {
-    if (number === 0) return "0";
+  if (number === 0) return "₹0";
 
-    // Convert to absolute value to handle negative numbers
-    const absNumber = Math.abs(number);
+  const absNumber = Math.abs(number);
+  let result = "";
 
-    let result = "";
-    if (absNumber >= 10000000) {
-        // Convert to crores
-        const crores = (absNumber / 10000000).toFixed(2);
-        result = `${crores} Cr`;
-    } else if (absNumber >= 100000) {
-        // Convert to lakhs
-        const lakhs = (absNumber / 100000).toFixed(2);
-        result = `${lakhs} Lakhs`;
-    } else {
-        result = absNumber.toString();
-    }
+  if (absNumber >= 10000000) {
+    const crores = (absNumber / 10000000).toFixed(2);
+    result = `${crores} Cr`;
+  } else if (absNumber >= 100000) {
+    const lakhs = (absNumber / 100000).toFixed(2);
+    result = `${lakhs} Lakhs`;
+  } else {
+    result = absNumber.toString();
+  }
 
-    // Add negative sign if the original number was negative
-    return number < 0 ? `-${result}` : result;
+  return number < 0 ? `-₹${result}` : `₹${result}`;
 }
+
 
 // Test the function
 console.log(toIndianCurrency(1000000));  // Output: "10 Lakhs"

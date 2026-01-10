@@ -68,9 +68,10 @@ const auctionSchema = new mongoose.Schema(
             type: Map,
             of: Number,
             default: new Map([
-                ['0', 1000000],
-                ['20000000', 2000000], 
-                ['50000000', 2500000] 
+                // ['0', 1000000],
+                // ['20000000', 2000000], 
+                // ['50000000', 2500000] 
+                ['0', 50]
             ])
         },        
         auction_details: {

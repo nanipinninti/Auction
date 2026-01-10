@@ -8,7 +8,7 @@ export default function AddFranchises() {
   const [franchises, setFranchises] = useState([]); // State to store all franchises
   const [allFranchises, setAllFranchises] = useState([]); // State to store both initial and selected franchises
   const [loading, setLoading] = useState(true); // Loading state for API call
-  const [purse, setPurse] = useState("500000000"); // State for purse value
+  const [purse, setPurse] = useState("5000"); // State for purse value
   const [showSuccessModal, setShowSuccessModal] = useState(false); // Success modal state
   const [showErrorModal, setShowErrorModal] = useState(false); // Error modal state
 
