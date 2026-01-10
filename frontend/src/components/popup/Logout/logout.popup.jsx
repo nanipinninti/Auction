@@ -15,12 +15,12 @@ export default function LogoutPopup({closePopup}){
             if (response.ok){
                 Cookies.remove("authenticated")
                 localStorage.removeItem("user_name")
-                toast.success("Logout success")
+                console.log("Logout success")
             }else{
-                toast.error("Something went wront, please try again!")
+                console.error("Something went wront, please try again!")
             }
         }catch(error){
-            toast.error("Internal server Error!")
+            console.error("Internal server Error!")
         }
         finally{
             closePopup()

@@ -21,6 +21,11 @@ export default function AuctionRoom(){
     const {auction_id} = useParams()
     useEffect(()=>{
         fetchFranchiseDetails()
+        return () => {
+            // Runs when component unmounts
+            sessionStorage.removeItem("franchise_details");
+            console.log("AuctionRoom unmounted - data cleared");
+        };
     },[auction_id])
 
     const fetchFranchiseDetails= async()=>{
@@ -35,29 +40,29 @@ export default function AuctionRoom(){
                 const data = await response.json()
                 sessionStorage.setItem("franchise_details",JSON.stringify(data))
             }else{
-                toast.error("Failed to Fetch to Franchise Details")
+                console.error("Failed to Fetch to Franchise Details")
             }
         }catch(error){
-            toast.error("Servor Error")
+            console.error("Server Error")
         }
     }
     
     return(
-        <div className="bg-gray-50 min-h-screen min-w-screen text-[#323232]">
+        <div className="flex flex-col w-full gap-3 bg-gray-50 min-h-screen min-w-screen text-[#323232]" >
             <NavBar />
-            <div className="px-[25px] sm:px-[30px] mt-3 max-w-[1400px] mx-auto">
+            <div className="px-[25px] w-full sm:px-[30px] mt-3 max-w-[1400px] mx-auto">
                 <LiveRoom />
             </div>
 
-            <div className="px-[25px] sm:px-[30px] max-w-[1400px] mx-auto ">
+            <div className="px-[25px] sm:px-[30px] w-full max-w-[1400px] mx-auto ">
                 <FranchiesStatus />
             </div>
 
-            <div className="px-[25px] sm:px-[30px]  max-w-[1400px] mx-auto">
+            <div className="px-[25px] sm:px-[30px] w-full   max-w-[1400px] mx-auto">
                 <Sets />
             </div>
 
-            <div >
+            <div className="px-[25px] sm:px-[30px] w-full   max-w-[1400px] mx-auto">
                 <PlayerStatus />
             </div>
             <Footer/>

@@ -149,10 +149,10 @@ const AuctionCompletion = (msg)=>{
         sessionStorage.setItem("current_set",data.auction_details.current_set)
         sessionStorage.setItem("bid_ratio", JSON.stringify(data.bid_ratio));
       } else {
-        toast.error("Failted to Fetch");
+        console.log("Failted to Fetch");
       }
     } catch (error) {
-      toast.error("Failted to fetch");
+      console.log("Failted to fetch");
     }
   };
 
@@ -184,10 +184,10 @@ const AuctionCompletion = (msg)=>{
         socket.emit("refresh");
         socket.emit("reset",auction_id)
       } else {
-        toast.error("Failed to send the player");
+        console.log("Failed to send the player");
       }
     } catch (error) {
-      toast.error("Servor error");
+      console.log("Servor error");
     }
   };
 
@@ -211,10 +211,10 @@ const AuctionCompletion = (msg)=>{
         socket.emit("close-timer")
         socket.emit("refresh");
       } else {
-        toast.error("failed to pause the auction , incorrect auction id");
+        console.log("failed to pause the auction , incorrect auction id");
       }
     } catch (error) {
-      toast.error("Failed to pause the auction");
+      console.log("Failed to pause the auction");
     }
   };
 
@@ -245,10 +245,10 @@ const AuctionCompletion = (msg)=>{
         socket.emit("refresh");
         socket.emit("reset",auction_id)
       } else {
-        toast.error("Failed to sold the Player");
+        console.log("Failed to sold the Player");
       }
     } catch (error) {
-      toast.error("Failed to sold the Player, Internal servor error");
+      console.log("Failed to sold the Player, Internal servor error");
     }
   };
 
@@ -273,10 +273,10 @@ const AuctionCompletion = (msg)=>{
         socket.emit("refresh");
         socket.emit("reset",auction_id)
       } else {
-        toast.error("Failed to Unsold the Players");
+        console.log("Failed to Unsold the Players");
       }
     } catch (error) {
-      toast.error("Failed to Un Sold the Player, Internal servor error");
+      console.log("Failed to Un Sold the Player, Internal servor error");
     }
   };
   // auction actions for franchise
@@ -301,11 +301,11 @@ const AuctionCompletion = (msg)=>{
         socket.emit("reset",auction_id)
         socket.emit("refresh");
       } else {
-        toast.error("Failed to Raise the Bid, Try again");
+        console.log("Failed to Raise the Bid, Try again");
         fetchAuctionDetails();
       }
     } catch (error) {
-      toast.error("Servor Error");
+      console.log("Servor Error");
     }
   };
 
@@ -331,11 +331,11 @@ const AuctionCompletion = (msg)=>{
         socket.emit("reset",auction_id)
         socket.emit("refresh");
       } else {
-        toast.error("Failed to Raise the Bid, Try again");
+        console.log("Failed to Raise the Bid, Try again");
         fetchAuctionDetails();
       }
     } catch (error) {
-      toast.error("Servor Error");
+      console.log("Servor Error");
     }
   };
 
@@ -366,10 +366,10 @@ const AuctionCompletion = (msg)=>{
           return EndAuction()
         }
       } else {
-        toast.error("Failed to Pick the set, Try again");
+        console.log("Failed to Pick the set, Try again");
       }
     } catch (error) {
-      toast.error("Servor Error");
+      console.log("Servor Error");
     }
   };
 
@@ -394,10 +394,10 @@ const AuctionCompletion = (msg)=>{
         fetchAuctionDetails();      
         socket.emit("refresh");
       } else {
-        toast.error("Failed to end the Auction!");
+        console.log("Failed to end the Auction!");
       }
     } catch (error) {
-      toast.error("Internal Servor Error to end the auction");
+      console.log("Internal Servor Error to end the auction");
     }
   };
 

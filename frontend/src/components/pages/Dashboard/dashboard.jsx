@@ -58,11 +58,11 @@ export default function Dashboard() {
         setAuctions(data.auctions);
       } else {
         setError(true);
-        toast.error("Failed to fetch auctions");
+        console.error("Failed to fetch auctions");
       }
     } catch {
       setError(true);
-      toast.error("Internal Server Error");
+      console.error("Internal Server Error");
     } finally {
       setLoading(false);
     }

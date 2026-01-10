@@ -5,28 +5,37 @@ const Timer = ({ endTime }) => {
 
   useEffect(() => {
     const updateTimer = () => {
-      const now = Math.floor(Date.now() / 1000);
+      const now = Math.floor(Date.now() / 1000); // current time in seconds
       const remaining = Math.max(0, endTime - now);
       setTimeLeft(remaining);
     };
 
-    updateTimer(); // Initial update
-    const interval = setInterval(updateTimer, 1000); // Update every second
+    updateTimer(); // initial update
+    const interval = setInterval(updateTimer, 1000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [endTime]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1>Timer</h1>
-    <span className="countdown  text-[25px]">
-      <span style={{ "--value": timeLeft }}>{timeLeft}</span>
-    </span>
+    <div className="flex flex-col items-center justify-center gap-2">
+      <div className="flex gap-1 items-start">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer-icon lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+        </div>
+
+        <h1 className="text-[12px] text-gray-700 uppercase">Timer</h1>
+      </div>
+
+      {/* Plain text → no 99 limit */}
+      <span className="text-[17px] text-red-500 font-semibold">
+        {timeLeft}
+      </span>
     </div>
   );
 };
 
 export default Timer;
+
 
 
 

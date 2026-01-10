@@ -49,7 +49,7 @@ export default function PlayerBoard(props) {
     setIsLoading(true);
     try {
       if (!playerId || playerId === "#") {
-        toast.error("Invalid player ID");
+        console.log("Invalid player ID");
         return;
       }
 
@@ -64,11 +64,11 @@ export default function PlayerBoard(props) {
         const data = await response.json();
         setPlayerDetails(data.player_details || {});
       } else {
-        toast.error(`Failed to fetch player details. Status code: ${response.status}`);
+        console.log(`Failed to fetch player details. Status code: ${response.status}`);
       }
     } catch (error) {
       console.error("Error fetching player details:", error);
-      toast.error("Failed to fetch player details. Please check your network connection.");
+      console.log("Failed to fetch player details. Please check your network connection.");
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +91,7 @@ export default function PlayerBoard(props) {
 
   const franchises = JSON.parse(sessionStorage.getItem("franchise_details" )) || {};
   return (
-    <div className="bg-gray-50 min-h-screen sm:p-6">
+    <div className="bg-gray-50 min-h-screen ">
       {/* Profile & Stats Section */}
       <div className="container mx-auto min-h-[500px]">
         {isLoading ? (

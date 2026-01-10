@@ -37,10 +37,10 @@ export default function AuctionPause(props) {
       if (response.ok) {
         toast.success("Succesfully set the Set");
       } else {
-        toast.error("Failed to Pick the set, Try again");
+        console.log("Failed to Pick the set, Try again");
       }
     } catch (error) {
-      toast.error("Servor Error");
+      console.log("Servor Error");
     }
   };
 
@@ -87,10 +87,10 @@ export default function AuctionPause(props) {
       if (response.ok) {
         BeginAuction();
       } else {
-        toast.error("Failed to start the auction, incorrect auction ID");
+        console.log("Failed to start the auction, incorrect auction ID");
       }
     } catch (error) {
-      toast.error("Failed to start the auction");
+      console.log("Failed to start the auction");
     }
   };
 

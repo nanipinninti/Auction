@@ -43,7 +43,7 @@ export default function AuctionRegistration() {
   const RegisterAuction = async () => {
     const api = `${DOMAIN}/auction/add-auction`;
     if (!isFutureDateTime(auctionDate,auctionTime)){
-      toast.error("Date and time should be future!")
+      console.error("Date and time should be future!")
       return
     }
     const formData = new FormData();
@@ -75,10 +75,10 @@ export default function AuctionRegistration() {
         setAuctionUrl(null)
         Instructions()
       } else {
-        toast.error("Failed to register");
+        console.error("Failed to register");
       }
     } catch (error) {
-      toast.error("Internal Server Error");
+      console.error("Internal Server Error");
     }
   };
   return (

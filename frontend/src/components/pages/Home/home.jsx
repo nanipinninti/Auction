@@ -67,11 +67,11 @@ export default function Home() {
         setLiveAuctions(data.live_auctions);
       } else {
         setErrorLive(true);
-        toast.error("Failed to fetch live auctions. Please try again.");
+        console.error("Failed to fetch live auctions. Please try again.");
       }
     } catch (error) {
       setErrorLive(true);
-      toast.error("Network error! Unable to fetch live auctions.");
+      console.error("Network error! Unable to fetch live auctions.");
     } finally {
       setIsLoadingLive(false);
     }
@@ -88,11 +88,11 @@ export default function Home() {
         setCompletedAuctions(data.completedAuctions);
       } else {
         setErrorCompleted(true);
-        toast.error("Failed to fetch completed auctions. Please try again.");
+        console.error("Failed to fetch completed auctions. Please try again.");
       }
     } catch (error) {
       setErrorCompleted(true);
-      toast.error("Network error! Unable to fetch completed auctions.");
+      console.error("Network error! Unable to fetch completed auctions.");
     } finally {
       setIsLoadingCompleted(false);
     }

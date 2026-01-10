@@ -105,7 +105,7 @@ export default function AuctionConfigurations() {
     e.preventDefault();
   
     if (!isFutureDateTime(auctionDate,auctionTime)){
-      toast.error("Date and time should be Future")
+      console.error("Date and time should be Future")
       return
     }
     const formData = new FormData();
