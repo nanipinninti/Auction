@@ -88,7 +88,7 @@ export default function PlayerBoard(props) {
     franchise_details && franchise_details[current_franchise]
       ? franchise_details[current_franchise].franchise_name
       : "#";
-
+  const noImageUrl = "https://i0.wp.com/digitalhealthskills.com/wp-content/uploads/2022/11/fd35c-no-user-image-icon-27.png?fit=500%2C500&ssl=1"
   const franchises = JSON.parse(sessionStorage.getItem("franchise_details" )) || {};
   return (
     <div className="bg-gray-50 min-h-screen ">
@@ -103,7 +103,7 @@ export default function PlayerBoard(props) {
               <div className="w-full sm:w-1/3 flex flex-col items-center">
                 {image_url ? (
                   <img
-                    src={image_url}
+                    src={image_url !== "#" ? image_url : noImageUrl} 
                     alt={player_name}
                     className="rounded-lg object-cover w-[250px] h-[330px] mb-6 shadow-lg"
                   />
